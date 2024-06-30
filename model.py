@@ -33,9 +33,9 @@ class Equation(TypstObj):
     def __init__(
         self,
         block: bool,
-        numbering: str,
         body: dict | TypstObj,
-        supplement: dict | TypstObj,
+        numbering: Optional[str] = None,
+        supplement: Optional[dict | TypstObj] = None,
         *args, **kwargs
     ) -> None:
         if kwargs.get("func") != "equation":
