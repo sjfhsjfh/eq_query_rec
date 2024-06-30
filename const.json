@@ -1,0 +1,20 @@
+{
+    "dif": {
+        "func": "sequence",
+        "children": [
+            {
+                "func": "h",
+                "amount": "0.17em",
+                "weak": true
+            },
+            {
+                "func": "styled",
+                "child": {
+                    "func": "text",
+                    "text": "d"
+                },
+                "styles": ".."
+            }
+        ]
+    }
+}
