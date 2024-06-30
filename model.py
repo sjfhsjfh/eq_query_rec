@@ -162,6 +162,46 @@ class Space(TypstObj):
             return ""  # ! TO BE MODIFIED
 
 
+class LineBreak(TypstObj):
+    def __init__(
+        self,
+        *args, **kwargs
+    ) -> None:
+        if kwargs.get("func") != "linebreak":
+            raise ValueError("func must be linebreak")
+        super().__init__(*args, **kwargs)
+        self.func = "linebreak"
+
+    def __eq__(self, value: LineBreak) -> bool:
+        return isinstance(value, LineBreak)
+
+    def reconstruct(self) -> str:
+        try:
+            return super().reconstruct()
+        except:
+            return r"\ "
+
+
+class AlignPoint(TypstObj):
+    def __init__(
+        self,
+        *args, **kwargs
+    ) -> None:
+        if kwargs.get("func") != "align-point":
+            raise ValueError("func must be align-point")
+        super().__init__(*args, **kwargs)
+        self.func = "align-point"
+
+    def __eq__(self, value: AlignPoint) -> bool:
+        return isinstance(value, AlignPoint)
+
+    def reconstruct(self) -> str:
+        try:
+            return super().reconstruct()
+        except:
+            return "&"
+
+
 class Frac(TypstObj):
     def __init__(
         self,
@@ -267,6 +307,33 @@ class Attach(TypstObj):
             return res
 
 
+class Op(TypstObj):
+    def __init__(
+        self,
+        text: dict | TypstObj,
+        limits: bool = False,
+        *args, **kwargs
+    ) -> None:
+        if kwargs.get("func") != "op":
+            raise ValueError("func must be op")
+        super().__init__(*args, **kwargs)
+        self.func = "op"
+        self.text = from_dict(text) if isinstance(
+            text, dict) else text
+        self.limits = limits
+
+    def __eq__(self, value: Op) -> bool:
+        return isinstance(value, Op) \
+            and self.text == value.text \
+            and self.limits == value.limits
+
+    def reconstruct(self) -> str:
+        try:
+            return super().reconstruct()
+        except:
+            return f"{self.text.reconstruct()}"
+
+
 class Styled(TypstObj):
     def __init__(
         self,
@@ -305,6 +372,10 @@ def from_dict(d: dict) -> TypstObj:
         return LR(**d)
     if d["func"] == "space":
         return Space(**d)
+    if d["func"] == "linebreak":
+        return LineBreak(**d)
+    if d["func"] == "align-point":
+        return AlignPoint(**d)
     if d["func"] == "frac":
         return Frac(**d)
     if d["func"] == "root":
@@ -315,10 +386,14 @@ def from_dict(d: dict) -> TypstObj:
         return H(**d)
     if d["func"] == "styled":
         return Styled(**d)
+    if d["func"] == "op":
+        return Op(**d)
+    print(d)
     raise ValueError(f"Invalid TypstObj {d['func']}")
 
 
 CONSTS = {}
+"""Human-readable shorthand, reading from `const.json`"""
 
 
 def load_consts(fp="const.json"):

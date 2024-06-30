@@ -16,5 +16,9 @@
                 "styles": ".."
             }
         ]
-    }
+    },
+    "sin": {"func": "op", "text": {"func": "text", "text": "sin"}},
+    "cos": {"func": "op", "text": {"func": "text", "text": "cos"}},
+    "tan": {"func": "op", "text": {"func": "text", "text": "tan"}},
+    "lim": {"func": "op", "text": {"func": "text", "text": "lim"}, "limits": true}
 }
