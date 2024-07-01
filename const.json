@@ -17,8 +17,301 @@
             }
         ]
     },
-    "sin": {"func": "op", "text": {"func": "text", "text": "sin"}},
-    "cos": {"func": "op", "text": {"func": "text", "text": "cos"}},
-    "tan": {"func": "op", "text": {"func": "text", "text": "tan"}},
-    "lim": {"func": "op", "text": {"func": "text", "text": "lim"}, "limits": true}
+    "arccos": {
+        "func": "op",
+        "text": {
+            "func": "text",
+            "text": "arccos"
+        }
+    },
+    "arcsin": {
+        "func": "op",
+        "text": {
+            "func": "text",
+            "text": "arcsin"
+        }
+    },
+    "arctan": {
+        "func": "op",
+        "text": {
+            "func": "text",
+            "text": "arctan"
+        }
+    },
+    "arg": {
+        "func": "op",
+        "text": {
+            "func": "text",
+            "text": "arg"
+        }
+    },
+    "cos": {
+        "func": "op",
+        "text": {
+            "func": "text",
+            "text": "cos"
+        }
+    },
+    "cosh": {
+        "func": "op",
+        "text": {
+            "func": "text",
+            "text": "cosh"
+        }
+    },
+    "cot": {
+        "func": "op",
+        "text": {
+            "func": "text",
+            "text": "cot"
+        }
+    },
+    "coth": {
+        "func": "op",
+        "text": {
+            "func": "text",
+            "text": "coth"
+        }
+    },
+    "csc": {
+        "func": "op",
+        "text": {
+            "func": "text",
+            "text": "csc"
+        }
+    },
+    "csch": {
+        "func": "op",
+        "text": {
+            "func": "text",
+            "text": "csch"
+        }
+    },
+    "ctg": {
+        "func": "op",
+        "text": {
+            "func": "text",
+            "text": "ctg"
+        }
+    },
+    "deg": {
+        "func": "op",
+        "text": {
+            "func": "text",
+            "text": "deg"
+        }
+    },
+    "det": {
+        "func": "op",
+        "text": {
+            "func": "text",
+            "text": "det"
+        },
+        "limits": true
+    },
+    "dim": {
+        "func": "op",
+        "text": {
+            "func": "text",
+            "text": "dim"
+        }
+    },
+    "exp": {
+        "func": "op",
+        "text": {
+            "func": "text",
+            "text": "exp"
+        }
+    },
+    "gcd": {
+        "func": "op",
+        "text": {
+            "func": "text",
+            "text": "gcd"
+        },
+        "limits": true
+    },
+    "hom": {
+        "func": "op",
+        "text": {
+            "func": "text",
+            "text": "hom"
+        }
+    },
+    "id": {
+        "func": "op",
+        "text": {
+            "func": "text",
+            "text": "id"
+        }
+    },
+    "im": {
+        "func": "op",
+        "text": {
+            "func": "text",
+            "text": "im"
+        }
+    },
+    "inf": {
+        "func": "op",
+        "text": {
+            "func": "text",
+            "text": "inf"
+        },
+        "limits": true
+    },
+    "ker": {
+        "func": "op",
+        "text": {
+            "func": "text",
+            "text": "ker"
+        }
+    },
+    "lg": {
+        "func": "op",
+        "text": {
+            "func": "text",
+            "text": "lg"
+        }
+    },
+    "lim": {
+        "func": "op",
+        "text": {
+            "func": "text",
+            "text": "lim"
+        },
+        "limits": true
+    },
+    "liminf": {
+        "func": "op",
+        "text": {
+            "func": "text",
+            "text": "lim inf"
+        },
+        "limits": true
+    },
+    "limsup": {
+        "func": "op",
+        "text": {
+            "func": "text",
+            "text": "lim sup"
+        },
+        "limits": true
+    },
+    "ln": {
+        "func": "op",
+        "text": {
+            "func": "text",
+            "text": "ln"
+        }
+    },
+    "log": {
+        "func": "op",
+        "text": {
+            "func": "text",
+            "text": "log"
+        }
+    },
+    "max": {
+        "func": "op",
+        "text": {
+            "func": "text",
+            "text": "max"
+        },
+        "limits": true
+    },
+    "min": {
+        "func": "op",
+        "text": {
+            "func": "text",
+            "text": "min"
+        },
+        "limits": true
+    },
+    "mod": {
+        "func": "op",
+        "text": {
+            "func": "text",
+            "text": "mod"
+        }
+    },
+    "Pr": {
+        "func": "op",
+        "text": {
+            "func": "text",
+            "text": "Pr"
+        },
+        "limits": true
+    },
+    "sec": {
+        "func": "op",
+        "text": {
+            "func": "text",
+            "text": "sec"
+        }
+    },
+    "sech": {
+        "func": "op",
+        "text": {
+            "func": "text",
+            "text": "sech"
+        }
+    },
+    "sin": {
+        "func": "op",
+        "text": {
+            "func": "text",
+            "text": "sin"
+        }
+    },
+    "sinc": {
+        "func": "op",
+        "text": {
+            "func": "text",
+            "text": "sinc"
+        }
+    },
+    "sinh": {
+        "func": "op",
+        "text": {
+            "func": "text",
+            "text": "sinh"
+        }
+    },
+    "sup": {
+        "func": "op",
+        "text": {
+            "func": "text",
+            "text": "sup"
+        },
+        "limits": true
+    },
+    "tan": {
+        "func": "op",
+        "text": {
+            "func": "text",
+            "text": "tan"
+        }
+    },
+    "tanh": {
+        "func": "op",
+        "text": {
+            "func": "text",
+            "text": "tanh"
+        }
+    },
+    "tg": {
+        "func": "op",
+        "text": {
+            "func": "text",
+            "text": "tg"
+        }
+    },
+    "tr": {
+        "func": "op",
+        "text": {
+            "func": "text",
+            "text": "tr"
+        }
+    }
 }
