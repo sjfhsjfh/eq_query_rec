@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Optional
+from typing import Dict, List, Optional
 
 
 def escape(s: str, chars: str = "\\,;.$&#\"'") -> str:
@@ -23,14 +23,21 @@ class TypstObj:
     def __init__(self, func: str, *args, **kwargs) -> None:
         self.func = func
 
-    def __repr__(self) -> str:
+    def __str__(self) -> str:
         return self.reconstruct()
+
+    def __repr__(self) -> str:
+        res = self.__dict__
+        PROTECTED = []
+        for p in PROTECTED:
+            res.pop(p)
+        s = f"{self.func}({', '.join([f'{k}: {v}' for k, v in res.items()])})"
+        return s
 
     def reconstruct(self) -> str:
         for k, v in CONSTS.items():
             if v.__eq__(self):
                 return f"{k}"
-        # print(f"Current type {self.func}")
         raise NotImplementedError
 
 
@@ -367,6 +374,9 @@ class LR(TypstObj):
         self.func = "lr"
         self.body = from_dict(body) if isinstance(body, dict) else body
 
+    def __eq__(self, value: LR) -> bool:
+        return isinstance(value, LR) and self.body == value.body
+
     def reconstruct(self) -> str:
         try:
             return super().reconstruct()
@@ -679,7 +689,7 @@ def from_dict(d: dict, break_equation: bool = True) -> TypstObj:
     raise ValueError(f"Invalid TypstObj {d['func']}")
 
 
-CONSTS = {}
+CONSTS: Dict[str, List[TypstObj]] = {}
 """Human-readable shorthand, reading from `const.json`"""
 
 
@@ -694,18 +704,18 @@ def load_consts(fp="const.typ"):
         typst.query(DIR / fp, selector="math.equation", root=DIR))[0]
     with open(DIR / fp, "r") as f:
         texts = f.readlines()
-    texts = texts[1:-1]
-    # vals = from_dict(ALL).children.split(Space())  # type: ignore
+    texts = list(map(lambda x: x.strip(), texts[1:-1]))
     vals = []
-    cur = []
+    cur: List[TypstObj] = []
     for child in from_dict(ALL).children:  # type: ignore
         if isinstance(child, Space):
             vals.append(cur)
             cur = []
             continue
         cur.append(child)
-    vals.append(child)
-    CONSTS.update({k.strip(): v for k, v in zip(texts, vals)})
+    vals.append(cur)
+    assert all(map(lambda x: len(x) == 1, vals))
+    CONSTS.update({sc.strip(): vs[0] for sc, vs in zip(texts, vals)})
 
 
 load_consts()
