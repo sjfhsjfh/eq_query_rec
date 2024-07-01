@@ -2,6 +2,12 @@ from __future__ import annotations
 from typing import Optional
 
 
+def escape(s: str, chars: str = "\\,;.$&#\"'") -> str:
+    for c in chars:
+        s = s.replace(c, f"\\{c}")
+    return s
+
+
 class TypstObj:
     """
     Typst Obj, in json its
@@ -69,6 +75,102 @@ class Equation(TypstObj):
             return res
 
 
+class Overline(TypstObj):
+    def __init__(
+        self,
+        body: dict | TypstObj,
+        *args, **kwargs
+    ) -> None:
+        if kwargs.get("func") != "overline":
+            raise ValueError("func must be overline")
+        super().__init__(*args, **kwargs)
+        self.func = "overline"
+        self.body = from_dict(body) if isinstance(body, dict) else body
+
+    def __eq__(self, value: Overline) -> bool:
+        return isinstance(value, Overline) and self.body == value.body
+
+    def reconstruct(self) -> str:
+        try:
+            return super().reconstruct()
+        except:
+            return f"overline({self.body.reconstruct()})"
+
+
+class Mid(TypstObj):
+    def __init__(
+        self,
+        body: dict | TypstObj,
+        *args, **kwargs
+    ) -> None:
+        if kwargs.get("func") != "mid":
+            raise ValueError("func must be mid")
+        super().__init__(*args, **kwargs)
+        self.func = "mid"
+        self.body = from_dict(body) if isinstance(body, dict) else body
+
+    def __eq__(self, value: Mid) -> bool:
+        return isinstance(value, Mid) and self.body == value.body
+
+    def reconstruct(self) -> str:
+        try:
+            return super().reconstruct()
+        except:
+            return f"mid({self.body.reconstruct()})"
+
+
+class Cancel(TypstObj):
+    def __init__(
+        self,
+        body: dict | TypstObj,
+        angle: str,
+        *args, **kwargs
+    ) -> None:
+        if kwargs.get("func") != "cancel":
+            raise ValueError("func must be cancel")
+        super().__init__(*args, **kwargs)
+        self.func = "cancel"
+        self.body = from_dict(body) if isinstance(body, dict) else body
+        self.angle = angle
+
+    def __eq__(self, value: Cancel) -> bool:
+        return isinstance(value, Cancel) \
+            and self.body == value.body \
+            and self.angle == value.angle
+
+    def reconstruct(self) -> str:
+        try:
+            return super().reconstruct()
+        except:
+            return f"cancel(angle: {self.angle}, {self.body.reconstruct()})"
+
+
+class Class(TypstObj):
+    def __init__(
+        self,
+        body: dict | TypstObj,
+        # class: str,
+        *args, **kwargs
+    ) -> None:
+        if kwargs.get("func") != "class":
+            raise ValueError("func must be class")
+        super().__init__(*args, **kwargs)
+        self.func = "class"
+        self.body = from_dict(body) if isinstance(body, dict) else body
+        self.class_ = kwargs.get("class")
+
+    def __eq__(self, value: Class) -> bool:
+        return isinstance(value, Class) \
+            and self.body == value.body \
+            and self.class_ == value.class_
+
+    def reconstruct(self) -> str:
+        try:
+            return super().reconstruct()
+        except:
+            return f"class(class: {self.class_}, {self.body.reconstruct()})"
+
+
 class Text(TypstObj):
     def __init__(
         self,
@@ -88,7 +190,7 @@ class Text(TypstObj):
         try:
             return super().reconstruct()
         except:
-            return self.text
+            return escape(self.text)
 
 
 class Sequence(TypstObj):
@@ -120,6 +222,110 @@ class Sequence(TypstObj):
             return super().reconstruct()
         except:
             return " ".join([child.reconstruct() for child in self.children])
+
+
+class Cases(TypstObj):
+    def __init__(
+        self,
+        children: list[dict | TypstObj],
+        *args, **kwargs
+    ) -> None:
+        if kwargs.get("func") != "cases":
+            raise ValueError("func must be cases")
+        super().__init__(*args, **kwargs)
+        self.func = "cases"
+        self.children = [from_dict(child) if isinstance(
+            child, dict) else child for child in children]
+
+    def __eq__(self, value: Cases) -> bool:
+        if not isinstance(value, Cases):
+            return False
+        if len(self.children) != len(value.children):
+            return False
+        for a, b in zip(self.children, value.children):
+            if not a.__eq__(b):
+                return False
+        return True
+
+    def reconstruct(self) -> str:
+        try:
+            return super().reconstruct()
+        except:
+            cs = ", ".join([child.reconstruct() for child in self.children])
+            return f"cases({cs})"
+
+
+class Vec(TypstObj):
+    def __init__(
+        self,
+        children: list[dict | TypstObj],
+        *args, **kwargs
+    ) -> None:
+        if kwargs.get("func") != "vec":
+            raise ValueError("func must be vec")
+        super().__init__(*args, **kwargs)
+        self.func = "vec"
+        self.children = [from_dict(child) if isinstance(
+            child, dict) else child for child in children]
+
+    def __eq__(self, value: Vec) -> bool:
+        if not isinstance(value, Vec):
+            return False
+        if len(self.children) != len(value.children):
+            return False
+        for a, b in zip(self.children, value.children):
+            if not a.__eq__(b):
+                return False
+        return True
+
+    def reconstruct(self) -> str:
+        try:
+            return super().reconstruct()
+        except:
+            cs = ", ".join([child.reconstruct() for child in self.children])
+            return f"vec({cs})"
+
+
+class Matrix(TypstObj):
+    def __init__(
+        self,
+        rows: list[list[dict | TypstObj]],
+        delim: str = "(",
+        *args, **kwargs
+    ) -> None:
+        if kwargs.get("func") != "mat":
+            raise ValueError("func must be mat")
+        super().__init__(*args, **kwargs)
+        self.func = "mat"
+        self.delim = delim
+        self.rows = [[from_dict(cell) if isinstance(
+            cell, dict) else cell for cell in row] for row in rows]
+
+    def __eq__(self, value: Matrix) -> bool:
+        if not isinstance(value, Matrix):
+            return False
+        if self.delim != value.delim:
+            return False
+        if len(self.rows) != len(value.rows):
+            return False
+        for a, b in zip(self.rows, value.rows):
+            if len(a) != len(b):
+                return False
+            for c, d in zip(a, b):
+                if not c.__eq__(d):
+                    return False
+        return True
+
+    def reconstruct(self) -> str:
+        try:
+            return super().reconstruct()
+        except:
+            rows = []
+            for row in self.rows:
+                rows.append(", ".join([cell.reconstruct() for cell in row]))
+            if self.delim == "(":  # ! TO BE MODIFIED
+                return f"matrix({';'.join(rows)})"
+            return f"matrix(delim: {self.delim}, {'; '.join(rows)})"
 
 
 class LR(TypstObj):
@@ -364,8 +570,22 @@ class Styled(TypstObj):
 def from_dict(d: dict) -> TypstObj:
     if d["func"] == "equation":
         return Equation(**d)
+    if d["func"] == "overline":
+        return Overline(**d)
+    if d["func"] == "mid":
+        return Mid(**d)
+    if d["func"] == "cancel":
+        return Cancel(**d)
+    if d["func"] == "class":
+        return Class(**d)
     if d["func"] == "sequence":
         return Sequence(**d)
+    if d["func"] == "cases":
+        return Cases(**d)
+    if d["func"] == "vec":
+        return Vec(**d)
+    if d["func"] == "mat":
+        return Matrix(**d)
     if d["func"] == "text":
         return Text(**d)
     if d["func"] == "lr":
