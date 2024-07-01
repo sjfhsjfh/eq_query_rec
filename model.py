@@ -685,7 +685,16 @@ def load_consts(fp="const.typ"):
     with open(DIR / fp, "r") as f:
         texts = f.readlines()
     texts = texts[1:-1]
-    vals = from_dict(ALL).body.split(Space())  # type: ignore
+    # vals = from_dict(ALL).children.split(Space())  # type: ignore
+    vals = []
+    cur = []
+    for child in from_dict(ALL).children:  # type: ignore
+        if isinstance(child, Space):
+            vals.append(cur)
+            cur = []
+            continue
+        cur.append(child)
+    vals.append(child)
     CONSTS.update({k.strip(): v for k, v in zip(texts, vals)})
 
 
