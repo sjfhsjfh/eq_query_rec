@@ -651,18 +651,18 @@ CONSTS = {}
 
 def load_consts(fp="const.typ"):
     global CONSTS
-    # from pathlib import Path
-    # import json
-    # import typst
+    from pathlib import Path
+    import json
+    import typst
 
-    # DIR = Path(__file__).parent
-    # ALL = json.loads(
-    #     typst.query(DIR / fp, selector="math.equation", root=DIR))[0]
-    # with open(DIR / fp, "r") as f:
-    #     texts = f.readlines()
-    # texts = texts[1:-1]
-    # vals = from_dict(ALL).body.split(Space())  # type: ignore
-    # CONSTS.update({k.strip(): v for k, v in zip(texts, vals)})
+    DIR = Path(__file__).parent
+    ALL = json.loads(
+        typst.query(DIR / fp, selector="math.equation", root=DIR))[0]
+    with open(DIR / fp, "r") as f:
+        texts = f.readlines()
+    texts = texts[1:-1]
+    vals = from_dict(ALL).body.split(Space())  # type: ignore
+    CONSTS.update({k.strip(): v for k, v in zip(texts, vals)})
 
 
 load_consts()
