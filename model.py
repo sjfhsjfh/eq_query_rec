@@ -8,7 +8,7 @@ def escape(s: str, chars: str = "\\,;.$&#\"'") -> str:
     parts = [
         re.sub(
             r'''[\,;.$&#"']''',
-            lambda x: f"\\{x}",
+            lambda x: f"\\{x.group(0)}",
             part
         ) if not part.startswith('"') else part
         for part in parts
