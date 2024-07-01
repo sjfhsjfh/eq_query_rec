@@ -888,9 +888,9 @@ def load_consts(fp="const.typ"):
     with open(DIR / fp, "r") as f:
         texts = f.readlines()
     texts = map(lambda x: x.strip(), texts)
+    texts = filter(lambda x: not x.startswith("$"), texts)
     texts = map(lambda x: x.strip("\\"), texts)
     texts = filter(lambda x: not x.startswith("//"), texts)
-    texts = filter(lambda x: not x.startswith("$"), texts)
     texts = list(texts)
     vals = []
     cur: List[TypstObj] = []
