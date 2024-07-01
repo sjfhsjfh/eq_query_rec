@@ -265,7 +265,9 @@ class Text(TypstObj):
         except:
             if len(self.text) == 1:
                 return escape(self.text)
-            return f"""\"{''.join(map(escape, self.text))}\""""
+
+            def str_escape(c): return escape(c, chars='\\"')
+            return f"""\"{''.join(map(str_escape, self.text))}\""""
 
 
 class Sequence(TypstObj):
