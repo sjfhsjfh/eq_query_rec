@@ -12,7 +12,7 @@ def query_eq(*args, **kwargs) -> List[Equation]:
     ds = json.loads(typst.query(*args, **kwargs))
 
     def narrow_to_eq(d: dict) -> Equation:
-        res = from_dict(d)
+        res = from_dict(d, break_equation=False)
         assert isinstance(res, Equation)
         return res
     res = [narrow_to_eq(d) for d in ds]

@@ -145,6 +145,32 @@ class Cancel(TypstObj):
             return f"cancel(angle: {self.angle}, {self.body.reconstruct()})"
 
 
+class Accent(TypstObj):
+    def __init__(
+        self,
+        base: dict | TypstObj,
+        accent: str,
+        *args, **kwargs
+    ) -> None:
+        if kwargs.get("func") != "accent":
+            raise ValueError("func must be accent")
+        super().__init__(*args, **kwargs)
+        self.func = "accent"
+        self.base = from_dict(base) if isinstance(base, dict) else base
+        self.accent = accent
+
+    def __eq__(self, value: Accent) -> bool:
+        return isinstance(value, Accent) \
+            and self.base == value.base \
+            and self.accent == value.accent
+
+    def reconstruct(self) -> str:
+        try:
+            return super().reconstruct()
+        except:
+            return f"accent({self.base.reconstruct()}, {self.accent})"
+
+
 class Class(TypstObj):
     def __init__(
         self,
@@ -168,7 +194,7 @@ class Class(TypstObj):
         try:
             return super().reconstruct()
         except:
-            return f"class(class: {self.class_}, {self.body.reconstruct()})"
+            return f"class({self.class_}, {self.body.reconstruct()})"
 
 
 class Text(TypstObj):
@@ -567,8 +593,10 @@ class Styled(TypstObj):
             return ""  # ! TO BE MODIFIED
 
 
-def from_dict(d: dict) -> TypstObj:
+def from_dict(d: dict, break_equation: bool = True) -> TypstObj:
     if d["func"] == "equation":
+        if break_equation:
+            return Equation(**d).body
         return Equation(**d)
     if d["func"] == "overline":
         return Overline(**d)
@@ -576,6 +604,8 @@ def from_dict(d: dict) -> TypstObj:
         return Mid(**d)
     if d["func"] == "cancel":
         return Cancel(**d)
+    if d["func"] == "accent":
+        return Accent(**d)
     if d["func"] == "class":
         return Class(**d)
     if d["func"] == "sequence":
@@ -608,6 +638,9 @@ def from_dict(d: dict) -> TypstObj:
         return Styled(**d)
     if d["func"] == "op":
         return Op(**d)
+    if d["func"] == "box":
+        # Ignore
+        return Space(func="space")
     print(d)
     raise ValueError(f"Invalid TypstObj {d['func']}")
 
@@ -616,14 +649,20 @@ CONSTS = {}
 """Human-readable shorthand, reading from `const.json`"""
 
 
-def load_consts(fp="const.json"):
+def load_consts(fp="const.typ"):
     global CONSTS
-    from pathlib import Path
-    import json
+    # from pathlib import Path
+    # import json
+    # import typst
 
-    DIR = Path(__file__).parent
-    with open(DIR / fp, "r") as f:
-        CONSTS.update({k: from_dict(v) for k, v in json.load(f).items()})
+    # DIR = Path(__file__).parent
+    # ALL = json.loads(
+    #     typst.query(DIR / fp, selector="math.equation", root=DIR))[0]
+    # with open(DIR / fp, "r") as f:
+    #     texts = f.readlines()
+    # texts = texts[1:-1]
+    # vals = from_dict(ALL).body.split(Space())  # type: ignore
+    # CONSTS.update({k.strip(): v for k, v in zip(texts, vals)})
 
 
 load_consts()
