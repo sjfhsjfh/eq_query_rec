@@ -1,9 +1,11 @@
 from typing import List
 from model import Equation
 from query import query_eq
+from pathlib import Path
 
 
 def main(root):
+    root = Path(root)
     if not root.exists():
         root.mkdir()
 
@@ -20,6 +22,5 @@ def main(root):
 
 
 if __name__ == "__main__":
-    from pathlib import Path
     root = Path(__file__).parent
     main(root / "test")
