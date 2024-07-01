@@ -270,7 +270,7 @@ class Text(TypstObj):
         except:
             if len(self.text) == 1:
                 return escape(self.text)
-            return f"\"{escape(self.text)}\""
+            return f"""\"{escape(self.text, chars='"')}\""""
 
 
 class Sequence(TypstObj):
