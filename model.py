@@ -704,6 +704,7 @@ SKIP = (
     "context",
     "grid",
     "move",
+    "(..) => ..",  # wtf is this
 )
 
 
