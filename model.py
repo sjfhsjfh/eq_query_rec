@@ -3,17 +3,12 @@ from typing import Dict, List, Optional
 
 
 def escape(s: str, chars: str = "\\,;.$&#\"'") -> str:
-    import re
-    parts = re.split(r'((?<!\\)".*?(?<!\\)")', s)
-    parts = [
-        re.sub(
-            r'''[\,;.$&#"']''',
-            lambda x: f"\\{x.group(0)}",
-            part
-        ) if not part.startswith('"') else part
-        for part in parts
-    ]
-    s = "".join(parts)
+    """
+    Single character escape
+    """
+    assert len(s) == 1
+    if s in chars:
+        return "\\" + s
     return s
 
 
@@ -270,7 +265,7 @@ class Text(TypstObj):
         except:
             if len(self.text) == 1:
                 return escape(self.text)
-            return f"""\"{escape(self.text, chars='"')}\""""
+            return f"""\"{''.join(map(escape, self.text))}\""""
 
 
 class Sequence(TypstObj):
