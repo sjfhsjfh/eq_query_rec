@@ -201,11 +201,12 @@ class Text(TypstObj):
     def __init__(
         self,
         text: str,
+        func: str = "text",
         *args, **kwargs
     ) -> None:
-        if kwargs.get("func") != "text":
+        if func != "text":
             raise ValueError("func must be text")
-        super().__init__(*args, **kwargs)
+        super().__init__(func=func, *args, **kwargs)
         self.func = "text"
         self.text = text
 
@@ -370,6 +371,15 @@ class LR(TypstObj):
         try:
             return super().reconstruct()
         except:
+            if isinstance(self.body, Sequence):
+                c = self.body.children
+                if len(c) >= 2:
+                    if c[0] == Text("(") and c[-1] == Text(")"):
+                        return self.body.reconstruct()
+                    if c[0] == Text("[") and c[-1] == Text("]"):
+                        return self.body.reconstruct()
+                    if c[0] == Text("{") and c[-1] == Text("}"):
+                        return self.body.reconstruct()
             return f"lr({self.body.reconstruct()})"
 
 
