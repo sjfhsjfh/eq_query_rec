@@ -761,6 +761,7 @@ def from_dict(d: dict, break_equation: bool = True) -> TypstObj:
         return Op(**d)
     if d["func"] in SKIP:
         # Ignore
+        print(f"Skipping {d['func']}")
         return Space(func="space")
     print(d)
     raise ValueError(f"Invalid TypstObj {d['func']}")
