@@ -1,7 +1,8 @@
-from typing import List
+from tqdm import tqdm
 from model import Equation
-from query import query_eq
 from pathlib import Path
+from query import query_eq
+from typing import List
 
 
 def main(root):
@@ -10,15 +11,30 @@ def main(root):
         root.mkdir()
 
     res: List[Equation] = []
-    for typ in root.glob("**/*.typ"):
+
+    for typ in tqdm(
+            root.glob("**/*.typ"),
+            desc="Files compiled",
+            unit="file",
+            total=len(list(root.glob("**/*.typ")))
+    ):
         try:
             res.extend(query_eq(typ, root=root))
         except Exception as e:
             print(f"Error: {e}")
     import json
     with open(root / "out.json", "w") as f:
-        json.dump([r.reconstruct()
-                  for r in res], f, indent=4, ensure_ascii=False)
+        json.dump(
+            [r.reconstruct() for r in tqdm(
+                res,
+                desc="Standardizing equations",
+                unit="eq",
+                total=len(res)
+            )],
+            f,
+            indent=4,
+            ensure_ascii=False
+        )
 
 
 if __name__ == "__main__":
