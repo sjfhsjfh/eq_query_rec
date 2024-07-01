@@ -18,9 +18,11 @@ $
   space.punct
   space.thin
   space.hair
-  paren
-  paren.l
-  paren.r
+  // paren
+  // paren.l
+  \(
+  // paren.r
+  \)
   paren.t
   paren.b
   brace
@@ -183,7 +185,8 @@ $
   prime.triple
   prime.triple.rev
   prime.quad
-  plus
+  // plus
+  +
   plus.circle
   plus.circle.arrow
   plus.circle.big
@@ -192,7 +195,8 @@ $
   plus.small
   plus.square
   plus.triangle
-  minus
+  // minus
+  -
   minus.circle
   minus.dot
   minus.plus
@@ -213,7 +217,8 @@ $
   times.square
   times.triangle
   ratio
-  eq
+  // eq
+  =
   eq.star
   eq.circle
   eq.colon
@@ -362,7 +367,7 @@ $
   sect.sq
   sect.sq.big
   sect.sq.double
-  infinity
+  // infinity
   oo
   diff
   partial
@@ -549,9 +554,11 @@ $
   arrow.r.curve
   arrow.r.dashed
   arrow.r.dotted
-  arrow.r.double
+  // arrow.r.double
+  =>
   arrow.r.double.bar
-  arrow.r.double.long
+  // arrow.r.double.long
+  ==>
   arrow.r.double.long.bar
   arrow.r.double.not
   arrow.r.filled
@@ -915,9 +922,7 @@ $
   ~~>
   <~
   <~~
-  =>
   |=>
-  ==>
   <==
   <=>
   <==>

@@ -781,7 +781,11 @@ def load_consts(fp="const.typ"):
         typst.query(DIR / fp, selector="math.equation", root=DIR))[0]
     with open(DIR / fp, "r") as f:
         texts = f.readlines()
-    texts = list(map(lambda x: x.strip(), texts[1:-1]))
+    texts = map(lambda x: x.strip(), texts)
+    texts = map(lambda x: x.strip("\\"), texts)
+    texts = filter(lambda x: not x.startswith("//"), texts)
+    texts = filter(lambda x: not x.startswith("$"), texts)
+    texts = list(texts)
     vals = []
     cur: List[TypstObj] = []
     for child in from_dict(ALL).children:  # type: ignore
@@ -791,7 +795,9 @@ def load_consts(fp="const.typ"):
             continue
         cur.append(child)
     vals.append(cur)
+    vals = list(filter(lambda x: x != [], vals))
     assert all(map(lambda x: len(x) == 1, vals))
+    assert len(texts) == len(vals)
     CONSTS.update({sc.strip(): vs[0] for sc, vs in zip(texts, vals)})
 
 
