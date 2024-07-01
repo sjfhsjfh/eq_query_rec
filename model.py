@@ -394,6 +394,28 @@ class Space(TypstObj):
             return ""  # ! TO BE MODIFIED
 
 
+class Primes(TypstObj):
+    def __init__(
+        self,
+        count: int,
+        *args, **kwargs
+    ) -> None:
+        if kwargs.get("func") != "primes":
+            raise ValueError("func must be primes")
+        super().__init__(*args, **kwargs)
+        self.func = "primes"
+        self.count = count
+
+    def __eq__(self, value: Primes) -> bool:
+        return isinstance(value, Primes) and self.count == value.count
+
+    def reconstruct(self) -> str:
+        try:
+            return super().reconstruct()
+        except:
+            return f"primes(#{self.count})"
+
+
 class LineBreak(TypstObj):
     def __init__(
         self,
@@ -622,6 +644,8 @@ def from_dict(d: dict, break_equation: bool = True) -> TypstObj:
         return LR(**d)
     if d["func"] == "space":
         return Space(**d)
+    if d["func"] == "primes":
+        return Primes(**d)
     if d["func"] == "linebreak":
         return LineBreak(**d)
     if d["func"] == "align-point":
