@@ -8,6 +8,14 @@ def escape(s: str, chars: str = "\\,;.$&#\"'") -> str:
     return s
 
 
+def func_recon(name, *args, **kwargs):
+    # Remove None values in kwargs
+    kwargs = {k: v for k, v in kwargs.items() if v is not None}
+    arg_str = "".join(map(lambda x: f"{x[0]}: {str(x[1])}", kwargs.items()))
+    arg_str += ", ".join(map(str, args))
+    return f"{name}({arg_str})"
+
+
 class TypstObj:
     """
     Typst Obj, in json its
@@ -101,7 +109,7 @@ class Overline(TypstObj):
         try:
             return super().reconstruct()
         except:
-            return f"overline({self.body.reconstruct()})"
+            return func_recon("overline", self.body.reconstruct())
 
 
 class Mid(TypstObj):
@@ -123,7 +131,7 @@ class Mid(TypstObj):
         try:
             return super().reconstruct()
         except:
-            return f"mid({self.body.reconstruct()})"
+            return func_recon("mid", self.body.reconstruct())
 
 
 class Limits(TypstObj):
@@ -145,7 +153,7 @@ class Limits(TypstObj):
         try:
             return super().reconstruct()
         except:
-            return f"limits({self.body.reconstruct()})"
+            return func_recon("limits", self.body.reconstruct())
 
 
 class Cancel(TypstObj):
@@ -171,7 +179,11 @@ class Cancel(TypstObj):
         try:
             return super().reconstruct()
         except:
-            return f"cancel(angle: {self.angle}, {self.body.reconstruct()})"
+            return func_recon(
+                "cancel",
+                self.body.reconstruct(),
+                angle=self.angle
+            )
 
 
 class Accent(TypstObj):
@@ -197,7 +209,7 @@ class Accent(TypstObj):
         try:
             return super().reconstruct()
         except:
-            return f"accent({self.base.reconstruct()}, {self.accent})"
+            return func_recon("accent", self.base.reconstruct(), self.accent)
 
 
 class Class(TypstObj):
@@ -223,7 +235,7 @@ class Class(TypstObj):
         try:
             return super().reconstruct()
         except:
-            return f"class({self.class_}, {self.body.reconstruct()})"
+            return func_recon("class", self.class_, self.body.reconstruct())
 
 
 class Text(TypstObj):
@@ -307,8 +319,10 @@ class Cases(TypstObj):
         try:
             return super().reconstruct()
         except:
-            cs = ", ".join([child.reconstruct() for child in self.children])
-            return f"cases({cs})"
+            return func_recon(
+                "cases",
+                *[child.reconstruct() for child in self.children]
+            )
 
 
 class Vec(TypstObj):
@@ -338,8 +352,10 @@ class Vec(TypstObj):
         try:
             return super().reconstruct()
         except:
-            cs = ", ".join([child.reconstruct() for child in self.children])
-            return f"vec({cs})"
+            return func_recon(
+                "vec",
+                *[child.reconstruct() for child in self.children]
+            )
 
 
 class Matrix(TypstObj):
@@ -379,9 +395,10 @@ class Matrix(TypstObj):
             rows = []
             for row in self.rows:
                 rows.append(", ".join([cell.reconstruct() for cell in row]))
-            if self.delim == "(":  # ! TO BE MODIFIED
-                return f"matrix({';'.join(rows)})"
-            return f"matrix(delim: {self.delim}, {'; '.join(rows)})"
+            body = '; '.join(rows)
+            if self.delim == "(" or self.delim is None:
+                return func_recon("matrix", body)
+            return func_recon("matrix", body, delim=self.delim)
 
 
 class LR(TypstObj):
@@ -412,7 +429,7 @@ class LR(TypstObj):
                         return self.body.reconstruct()
                     if c[0] == Text("{") and c[-1] == Text("}"):
                         return self.body.reconstruct()
-            return f"lr({self.body.reconstruct()})"
+            return func_recon("lr", self.body.reconstruct())
 
 
 class Space(TypstObj):
@@ -433,7 +450,7 @@ class Space(TypstObj):
             return super().reconstruct()
         except:
             # return "med"
-            return ""  # ! TO BE MODIFIED
+            return " "  # ! TO BE MODIFIED
 
 
 class Primes(TypstObj):
@@ -455,7 +472,7 @@ class Primes(TypstObj):
         try:
             return super().reconstruct()
         except:
-            return f"primes(#{self.count})"
+            return func_recon("primes", f"#{self.count}")
 
 
 class LineBreak(TypstObj):
@@ -560,7 +577,11 @@ class Binom(TypstObj):
                 self.lower, TypstObj
             ) else "\\, ".join(
                 [e.reconstruct() for e in self.lower])
-            return f"binom({upper}, {lower})"
+            return func_recon(
+                "binom",
+                upper,
+                lower
+            )
 
 
 class Root(TypstObj):
@@ -583,9 +604,12 @@ class Root(TypstObj):
             return super().reconstruct()
         except:
             if self.index is not None:
-                return f"root({self.index.reconstruct()}," + \
-                    f"{self.radicand.reconstruct()})"
-            return f"sqrt({self.radicand.reconstruct()})"
+                return func_recon(
+                    "root",
+                    self.index.reconstruct(),
+                    self.radicand.reconstruct()
+                )
+            return func_recon("sqrt", self.radicand.reconstruct())
 
 
 class H(TypstObj):
@@ -611,7 +635,11 @@ class H(TypstObj):
         try:
             return super().reconstruct()
         except:
-            return ""  # ! TO BE MODIFIED
+            return func_recon(
+                "#h",
+                self.amount,
+                weak=str(self.weak).lower()
+            )
 
 
 class Attach(TypstObj):
@@ -669,7 +697,11 @@ class Op(TypstObj):
         try:
             return super().reconstruct()
         except:
-            return f"{self.text.reconstruct()}"
+            return func_recon(
+                "op",
+                self.text.reconstruct(),
+                limits=f"#{str(self.limits).lower()}"
+            )
 
 
 class Styled(TypstObj):
@@ -696,14 +728,81 @@ class Styled(TypstObj):
         try:
             return super().reconstruct()
         except:
-            return ""  # ! TO BE MODIFIED
+            return self.child.reconstruct()  # ! TO BE MODIFIED
+
+
+class Move(TypstObj):
+    def __init__(
+        self,
+        body: dict | TypstObj,
+        dx: Optional[str] = None,
+        dy: Optional[str] = None,
+        *args, **kwargs
+    ) -> None:
+        if kwargs.get("func") != "move":
+            raise ValueError("func must be move")
+        super().__init__(*args, **kwargs)
+        self.func = "move"
+        self.dx = dx
+        self.dy = dy
+        self.body = from_dict(body) if isinstance(body, Dict) else body
+
+    def __eq__(self, value: 'Move') -> bool:
+        return isinstance(value, Move) \
+            and self.dy == value.dy \
+            and self.body == value.body
+
+    def reconstruct(self) -> str:
+        try:
+            return super().reconstruct()
+        except:
+            return func_recon(
+                "#move",
+                self.body.reconstruct(),
+                dx=self.dx,
+                dy=self.dy
+            )
+
+
+class Strike(TypstObj):
+    def __init__(
+        self,
+        offset: str,
+        extent: str,
+        body: dict | TypstObj,
+        *args, **kwargs
+    ) -> None:
+        if kwargs.get("func") != "strike":
+            raise ValueError("func must be strike")
+        super().__init__(*args, **kwargs)
+        self.func = "strike"
+        self.offset = offset
+        self.extent = extent
+        self.body = from_dict(body) if isinstance(body, Dict) else body
+
+    def __eq__(self, value: 'Strike') -> bool:
+        return isinstance(value, Strike) \
+            and self.offset == value.offset \
+            and self.extent == value.extent \
+            and self.body == value.body
+
+    def reconstruct(self) -> str:
+        try:
+            return super().reconstruct()
+        except:
+            return func_recon(
+                "strike",
+                self.body.reconstruct(),
+                offset=self.offset,
+                extent=self.extent
+            )
 
 
 SKIP = (
     "box",
     "context",
     "grid",
-    "move",
+    # "move",
     "(..) => ..",  # wtf is this
 )
 
@@ -759,9 +858,14 @@ def from_dict(d: dict, break_equation: bool = True) -> TypstObj:
         return Styled(**d)
     if d["func"] == "op":
         return Op(**d)
+    if d["func"] == "move":
+        return Move(**d)
+    if d["func"] == "strike":
+        return Strike(**d)
+
     if d["func"] in SKIP:
         # Ignore
-        print(f"Skipping {d['func']}")
+        # print(f"Skipping {d['func']}")
         return Space(func="space")
     print(d)
     raise ValueError(f"Invalid TypstObj {d['func']}")
