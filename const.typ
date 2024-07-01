@@ -66,8 +66,6 @@ $
   angle.spheric
   angle.spheric.rev
   angle.spheric.top
-  ceil
-  floor
   amp
   amp.inv
   ast
