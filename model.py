@@ -9,11 +9,12 @@ def escape(s: str, chars: str = "\\,;.$&#\"'") -> str:
 
 
 def func_recon(name, *args, **kwargs):
-    # Remove None values in kwargs
+    # Remove No
+    # ne values in kwargs
     kwargs = {k: v for k, v in kwargs.items() if v is not None}
-    arg_str = "".join(map(lambda x: f"{x[0]}: {str(x[1])}", kwargs.items()))
-    arg_str += ", ".join(map(str, args))
-    return f"{name}({arg_str})"
+    arg_items = list(map(lambda x: f"{x[0]}: {str(x[1])}", kwargs.items()))
+    arg_items.extend(list(map(str, args)))
+    return f"{name}({', '.join(arg_items)})"
 
 
 class TypstObj:
