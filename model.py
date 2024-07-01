@@ -126,6 +126,28 @@ class Mid(TypstObj):
             return f"mid({self.body.reconstruct()})"
 
 
+class Limits(TypstObj):
+    def __init__(
+        self,
+        body: dict | TypstObj,
+        *args, **kwargs
+    ) -> None:
+        if kwargs.get("func") != "limits":
+            raise ValueError("func must be limits")
+        super().__init__(*args, **kwargs)
+        self.func = "limits"
+        self.body = from_dict(body) if isinstance(body, dict) else body
+
+    def __eq__(self, value: Limits) -> bool:
+        return isinstance(value, Limits) and self.body == value.body
+
+    def reconstruct(self) -> str:
+        try:
+            return super().reconstruct()
+        except:
+            return f"limits({self.body.reconstruct()})"
+
+
 class Cancel(TypstObj):
     def __init__(
         self,
@@ -677,6 +699,14 @@ class Styled(TypstObj):
             return ""  # ! TO BE MODIFIED
 
 
+SKIP = (
+    "box",
+    "context",
+    "grid",
+    "move",
+)
+
+
 def from_dict(d: dict, break_equation: bool = True) -> TypstObj:
     if d["func"] == "equation":
         if break_equation:
@@ -686,6 +716,8 @@ def from_dict(d: dict, break_equation: bool = True) -> TypstObj:
         return Overline(**d)
     if d["func"] == "mid":
         return Mid(**d)
+    if d["func"] == "limits":
+        return Limits(**d)
     if d["func"] == "cancel":
         return Cancel(**d)
     if d["func"] == "accent":
@@ -726,7 +758,7 @@ def from_dict(d: dict, break_equation: bool = True) -> TypstObj:
         return Styled(**d)
     if d["func"] == "op":
         return Op(**d)
-    if d["func"] == "box":
+    if d["func"] in SKIP:
         # Ignore
         return Space(func="space")
     print(d)
