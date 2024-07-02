@@ -463,6 +463,7 @@ $
   sect.sq.double
   // infinity
   oo
+  dif
   diff
   partial
   gradient

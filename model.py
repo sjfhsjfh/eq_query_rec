@@ -298,7 +298,29 @@ class Sequence(TypstObj):
         try:
             return super().reconstruct()
         except:
-            return " ".join([child.reconstruct() for child in self.children])
+            def process_slice(s: List[TypstObj]):
+                # KMP find Sequence in CONSTS
+                for k, v in CONSTS.items():
+                    if not isinstance(v, Sequence):
+                        continue
+                    i = 0
+                    j = 0
+                    while i < len(s) and j < len(v.children):
+                        if s[i] == v.children[j]:
+                            i += 1
+                            j += 1
+                            if j == len(v.children):
+                                return process_slice(s[:i - j]) \
+                                    + [k] + process_slice(s[i:])
+                        else:
+                            t = CONST_KMP[k]
+                            if j == 0:
+                                i += 1
+                            else:
+                                j = t[j - 1]
+                return [c.reconstruct() for c in s]
+
+            return " ".join(process_slice(self.children))
 
 
 class Cases(TypstObj):
@@ -881,12 +903,15 @@ def from_dict(d: dict, break_equation: bool = True) -> TypstObj:
     raise ValueError(f"Invalid TypstObj {d['func']}")
 
 
-CONSTS: Dict[str, List[TypstObj]] = {}
+CONSTS: Dict[str, TypstObj] = {}
 """Human-readable shorthand, reading from `const.json`"""
+
+CONST_KMP: Dict[str, List[int]] = {}
+"""KMP table for each CONSTS"""
 
 
 def load_consts(fp="const.typ"):
-    global CONSTS
+    global CONSTS, CONST_KMP
     from pathlib import Path
     import json
     import typst
@@ -914,6 +939,19 @@ def load_consts(fp="const.typ"):
     assert all(map(lambda x: len(x) == 1, vals))
     assert len(texts) == len(vals)
     CONSTS.update({sc.strip(): vs[0] for sc, vs in zip(texts, vals)})
+
+    # KMP table
+    for k, v in CONSTS.items():
+        if isinstance(v, Sequence):
+            t = [0] * len(v.children)
+            j = 0
+            for i in range(1, len(v.children)):
+                if v.children[i] == v.children[j]:
+                    j += 1
+                else:
+                    j = 0
+                t[i] = j
+            CONST_KMP[k] = t
 
 
 load_consts()
