@@ -18,7 +18,7 @@ def func_recon(name, *args, **kwargs):
     kwargs = {k: v for k, v in kwargs.items() if v is not None}
     arg_items = list(map(lambda x: f"{x[0]}: {str(x[1])}", kwargs.items()))
     arg_items.extend(list(map(str, args)))
-    return f"{name}({', '.join(arg_items)})"
+    return f"{name}( {', '.join(arg_items)} )"
 
 
 class TypstObj:
@@ -544,7 +544,8 @@ class Frac(TypstObj):
         try:
             return super().reconstruct()
         except:
-            return f"({self.num.reconstruct()}) / ({self.denom.reconstruct()})"
+            return f"( {self.num.reconstruct()} )" \
+                + " / " + f"( {self.denom.reconstruct()} )"
 
 
 class Binom(TypstObj):
@@ -676,9 +677,9 @@ class Attach(TypstObj):
         except:
             res = self.base.reconstruct()
             if self.t is not None:
-                res = f"{res}^({self.t.reconstruct()})"
+                res = f"{res} ^ ( {self.t.reconstruct()} )"
             if self.b is not None:
-                res = f"{res}_({self.b.reconstruct()})"
+                res = f"{res} _ ( {self.b.reconstruct()} )"
             return res
 
 
