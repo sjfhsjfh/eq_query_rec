@@ -3,7 +3,7 @@ from model import Equation
 from pathlib import Path
 from query import query_eq
 from typing import List
-
+from fix_physica import fix_physica
 
 def main(root):
     root = Path(root)
@@ -36,4 +36,6 @@ def main(root):
 
 if __name__ == "__main__":
     root = Path(__file__).parent
+    fix_physica()
     main(root / "test")
+    fix_physica()
