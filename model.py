@@ -35,6 +35,10 @@ class TypstObj:
 
     def __init__(self, func: str, *args, **kwargs) -> None:
         self.func = func
+        self.args = args
+        
+        for key, value in kwargs.items():
+            setattr(self, key, value)
 
     def __str__(self) -> str:
         return self.reconstruct()
@@ -187,7 +191,6 @@ class Cancel(TypstObj):
     def __init__(
         self,
         body: dict | TypstObj,
-        angle: str,
         *args, **kwargs
     ) -> None:
         if kwargs.get("func") != "cancel":
@@ -195,7 +198,6 @@ class Cancel(TypstObj):
         super().__init__(*args, **kwargs)
         self.func = "cancel"
         self.body = from_dict(body) if isinstance(body, dict) else body
-        self.angle = angle
 
     def __eq__(self, value: Cancel) -> bool:
         return isinstance(value, Cancel) \
@@ -209,7 +211,7 @@ class Cancel(TypstObj):
             return func_recon(
                 "cancel",
                 self.body.reconstruct(),
-                angle=self.angle
+                self.kwargs
             )
 
 
