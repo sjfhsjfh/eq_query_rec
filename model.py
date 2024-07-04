@@ -910,7 +910,7 @@ CONST_KMP: Dict[str, List[int]] = {}
 """KMP table for each CONSTS"""
 
 
-def load_consts(fp="const.typ"):
+def load_consts(fp="const.merged.typ"):
     global CONSTS, CONST_KMP
     from pathlib import Path
     import json
