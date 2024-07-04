@@ -21,14 +21,17 @@ patches = {
     ],
     "0.9.1": [
         {"line_number": 467, "patch": "let dsym = math.dif"},
+        {"line_number": 491, "patch": "$#arr.join(prod)$"},
         {"line_number": 525, "patch": "let d = math.dif"},
     ],
     "0.9.2": [
         {"line_number": 550, "patch": "let dsym = math.dif"},
+        {"line_number": 574, "patch": "$#arr.join(prod)$"},
         {"line_number": 608, "patch": "let d = math.dif"},
     ],
     "0.9.3": [
         {"line_number": 567, "patch": "let dsym = math.dif"},
+        {"line_number": 591, "patch": "$#arr.join(prod)$"},
         {"line_number": 625, "patch": "let d = math.dif"},
     ],
 }
