@@ -243,7 +243,7 @@ class Class(TypstObj):
         try:
             return super().reconstruct()
         except:
-            return func_recon("class", self.class_, self.body.reconstruct())
+            return func_recon("class", f"\"self.class_\"", self.body.reconstruct())
 
 
 class Text(TypstObj):
@@ -431,8 +431,8 @@ class Matrix(TypstObj):
                 rows.append(", ".join([cell.reconstruct() for cell in row]))
             body = '; '.join(rows)
             if self.delim == "(" or self.delim is None:
-                return func_recon("matrix", body)
-            return func_recon("matrix", body, delim=self.delim)
+                return func_recon("mat", body)
+            return func_recon("mat", body, delim=f"\"self.delim\"")
 
 
 class LR(TypstObj):
