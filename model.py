@@ -117,6 +117,28 @@ class Overline(TypstObj):
             return func_recon("overline", self.body.reconstruct())
 
 
+class Underline(TypstObj):
+    def __init__(
+        self,
+        body: dict | TypstObj,
+        *args, **kwargs
+    ) -> None:
+        if kwargs.get("func") != "underline":
+            raise ValueError("func must be underline")
+        super().__init__(*args, **kwargs)
+        self.func = "underline"
+        self.body = from_dict(body) if isinstance(body, dict) else body
+
+    def __eq__(self, value: Underline) -> bool:
+        return isinstance(value, Underline) and self.body == value.body
+
+    def reconstruct(self) -> str:
+        try:
+            return super().reconstruct()
+        except:
+            return func_recon("underline", self.body.reconstruct())
+
+
 class Mid(TypstObj):
     def __init__(
         self,
@@ -849,6 +871,8 @@ def from_dict(d: dict, break_equation: bool = True) -> TypstObj:
         return Equation(**d)
     if d["func"] == "overline":
         return Overline(**d)
+    if d["func"] == "underline":
+        return Underline(**d)
     if d["func"] == "mid":
         return Mid(**d)
     if d["func"] == "limits":
