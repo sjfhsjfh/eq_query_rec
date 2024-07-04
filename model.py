@@ -142,6 +142,50 @@ class Underline(TypstObj):
         except:
             return func_recon("underline", self.body.reconstruct())
 
+class Overbrace(TypstObj):
+    def __init__(
+        self,
+        body: dict | TypstObj,
+        *args, **kwargs
+    ) -> None:
+        if kwargs.get("func") != "overbrace":
+            raise ValueError("func must be overbrace")
+        super().__init__(*args, **kwargs)
+        self.func = "overbrace"
+        self.body = from_dict(body) if isinstance(body, dict) else body
+
+    def __eq__(self, value: Overbrace) -> bool:
+        return isinstance(value, Overbrace) and self.body == value.body
+
+    def reconstruct(self) -> str:
+        try:
+            return super().reconstruct()
+        except:
+            return func_recon("overbrace", self.body.reconstruct())
+
+
+class Underbrace(TypstObj):
+    def __init__(
+        self,
+        body: dict | TypstObj,
+        *args, **kwargs
+    ) -> None:
+        if kwargs.get("func") != "underbrace":
+            raise ValueError("func must be underbrace")
+        super().__init__(*args, **kwargs)
+        self.func = "underbrace"
+        self.body = from_dict(body) if isinstance(body, dict) else body
+
+    def __eq__(self, value: Underbrace) -> bool:
+        return isinstance(value, Underbrace) and self.body == value.body
+
+    def reconstruct(self) -> str:
+        try:
+            return super().reconstruct()
+        except:
+            return func_recon("underbrace", self.body.reconstruct())
+
+
 
 class Mid(TypstObj):
     def __init__(
@@ -875,6 +919,10 @@ def from_dict(d: dict, break_equation: bool = True) -> TypstObj:
         return Overline(**d)
     if d["func"] == "underline":
         return Underline(**d)
+    if d["func"] == "overbrace":
+        return Overbrace(**d)
+    if d["func"] == "underbrace":
+        return Underbrace(**d)
     if d["func"] == "mid":
         return Mid(**d)
     if d["func"] == "limits":
