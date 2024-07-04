@@ -230,6 +230,27 @@ class Limits(TypstObj):
         except:
             return func_recon("limits", self.body.reconstruct())
 
+class Scripts(TypstObj):
+    def __init__(
+        self,
+        body: dict | TypstObj,
+        *args, **kwargs
+    ) -> None:
+        if kwargs.get("func") != "scripts":
+            raise ValueError("func must be scripts")
+        super().__init__(*args, **kwargs)
+        self.func = "scripts"
+        self.body = from_dict(body) if isinstance(body, dict) else body
+
+    def __eq__(self, value: Scripts) -> bool:
+        return isinstance(value, Scripts) and self.body == value.body
+
+    def reconstruct(self) -> str:
+        try:
+            return super().reconstruct()
+        except:
+            return func_recon("scripts", self.body.reconstruct())
+
 
 class Cancel(TypstObj):
     def __init__(
@@ -927,6 +948,8 @@ def from_dict(d: dict, break_equation: bool = True) -> TypstObj:
         return Mid(**d)
     if d["func"] == "limits":
         return Limits(**d)
+    if d["func"] == "scripts":
+        return Scripts(**d)
     if d["func"] == "cancel":
         return Cancel(**d)
     if d["func"] == "accent":
