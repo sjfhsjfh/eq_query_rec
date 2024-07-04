@@ -214,8 +214,11 @@ class Accent(TypstObj):
         try:
             return super().reconstruct()
         except:
-            return func_recon("accent", self.base.reconstruct(), self.accent)
-
+            global ACCENTS
+            if ACCENTS[self.accent]["callable"]:
+                return func_recon(ACCENTS[self.accent]["name"], self.base.reconstruct())
+            else:
+                return func_recon("accent", self.base.reconstruct(), ACCENTS[self.accent]["shortcut"])
 
 class Class(TypstObj):
     def __init__(
@@ -952,6 +955,29 @@ def load_consts(fp="const.merged.typ"):
                     j = 0
                 t[i] = j
             CONST_KMP[k] = t
+
+
+ACCENTS = {
+    "\u0300": {"callable": True, "name": "grave"},
+    "\u0301": {"callable": True, "name": "acute"},
+    "\u0302": {"callable": True, "name": "hat"},
+    "\u0303": {"callable": True, "name": "tilde"},
+    "\u0304": {"callable": True, "name": "macron"},
+    "\u2013": {"callable": False, "name:": "dash", "shortcut": "dash"},
+    "\u0306": {"callable": True, "name": "breve"},
+    "\u0307": {"callable": True, "name": "dot"},
+    "\u0308": {"callable": True, "name": "dot.double"},
+    "\u20db": {"callable": True, "name": "dot.triple"},
+    "\u20dc": {"callable": True, "name": "dot.quad"},
+    "\u030a": {"callable": True, "name": "circle"},
+    "\u030b": {"callable": True, "name": "acute.double"},
+    "\u030c": {"callable": True, "name": "caron"},
+    "\u20d6": {"callable": True, "name": "arrow"},
+    "\u20d7": {"callable": True, "name": "arrow.l"},
+    "\u20e1": {"callable": True, "name": "arrow.l.r"},
+    "\u20d0": {"callable": True, "name": "harpoon"},
+    "\u20d1": {"callable": True, "name": "harpoon.lt"},
+}
 
 
 load_consts()
