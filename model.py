@@ -185,6 +185,50 @@ class Underbrace(TypstObj):
         except:
             return func_recon("underbrace", self.body.reconstruct())
 
+class Overbracket(TypstObj):
+    def __init__(
+        self,
+        body: dict | TypstObj,
+        *args, **kwargs
+    ) -> None:
+        if kwargs.get("func") != "overbracket":
+            raise ValueError("func must be overbracket")
+        super().__init__(*args, **kwargs)
+        self.func = "overbracket"
+        self.body = from_dict(body) if isinstance(body, dict) else body
+
+    def __eq__(self, value: Overbracket) -> bool:
+        return isinstance(value, Overbracket) and self.body == value.body
+
+    def reconstruct(self) -> str:
+        try:
+            return super().reconstruct()
+        except:
+            return func_recon("overbracket", self.body.reconstruct())
+
+
+class Underbracket(TypstObj):
+    def __init__(
+        self,
+        body: dict | TypstObj,
+        *args, **kwargs
+    ) -> None:
+        if kwargs.get("func") != "underbracket":
+            raise ValueError("func must be underbracket")
+        super().__init__(*args, **kwargs)
+        self.func = "underbracket"
+        self.body = from_dict(body) if isinstance(body, dict) else body
+
+    def __eq__(self, value: Underbracket) -> bool:
+        return isinstance(value, Underbracket) and self.body == value.body
+
+    def reconstruct(self) -> str:
+        try:
+            return super().reconstruct()
+        except:
+            return func_recon("underbracket", self.body.reconstruct())
+
+
 
 
 class Mid(TypstObj):
@@ -944,6 +988,10 @@ def from_dict(d: dict, break_equation: bool = True) -> TypstObj:
         return Overbrace(**d)
     if d["func"] == "underbrace":
         return Underbrace(**d)
+    if d["func"] == "overbracket":
+        return Overbracket(**d)
+    if d["func"] == "underbracket":
+        return Underbracket(**d)
     if d["func"] == "mid":
         return Mid(**d)
     if d["func"] == "limits":
