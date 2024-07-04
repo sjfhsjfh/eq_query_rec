@@ -18,10 +18,7 @@ def main(root):
             unit="file",
             total=len(list(root.glob("**/*.typ")))
     ):
-        try:
-            res.extend(query_eq(typ, root=root))
-        except Exception as e:
-            print(f"Error: {e}")
+        res.extend(query_eq(typ, root=root))
     import json
     with open(root / "out.json", "w") as f:
         json.dump(
