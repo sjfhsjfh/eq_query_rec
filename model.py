@@ -229,8 +229,6 @@ class Underbracket(TypstObj):
             return func_recon("underbracket", self.body.reconstruct())
 
 
-
-
 class Mid(TypstObj):
     def __init__(
         self,
@@ -317,10 +315,13 @@ class Cancel(TypstObj):
         try:
             return super().reconstruct()
         except:
-            return func_recon(
-                "cancel",
-                self.body.reconstruct(),
-                self.kwargs
+            return (
+                func_recon("cancel", self.body.reconstruct(), angle=self.angle)
+                if hasattr(self, "angle")
+                else func_recon(
+                    "cancel",
+                    self.body.reconstruct(),
+                )
             )
 
 
