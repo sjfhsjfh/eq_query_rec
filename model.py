@@ -590,6 +590,24 @@ class LR(TypstObj):
         except:
             if isinstance(self.body, Sequence):
                 c = self.body.children
+                first_index = next(
+                    (
+                        index
+                        for index, item in enumerate(c)
+                        if not isinstance(item, Space)
+                    ),
+                    None,
+                )
+                last_index = next(
+                    (
+                        len(c) - 1 - index
+                        for index, item in enumerate(reversed(c))
+                        if not isinstance(item, Space)
+                    ),
+                    None,
+                )
+                c = c[first_index : last_index + 1]
+
                 if len(c) >= 2:
                     if c[0] == Text("(") and c[-1] == Text(")"):
                         return self.body.reconstruct()
@@ -608,7 +626,7 @@ class Space(TypstObj):
         if kwargs.get("func") != "space":
             raise ValueError("func must be space")
         super().__init__(*args, **kwargs)
-        self.func = "lr"
+        self.func = "space"
 
     def __eq__(self, value: Space) -> bool:
         return isinstance(value, Space)
