@@ -5,6 +5,7 @@ from query import query_eq
 from typing import List
 from fix_physica import fix_physica
 
+
 def main(root):
     root = Path(root)
     if not root.exists():

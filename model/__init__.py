@@ -1,6 +1,12 @@
 from __future__ import annotations
 from typing import Dict, List, Optional
 
+from .objects.accent import Accent
+from .objects.cancel import Cancel
+from .objects.class_ import Class
+from .objects.equation import Equation
+from .objects.text import Text
+
 
 def escape(s: str, chars: str = "\\,;.$&#\"'") -> str:
     """
@@ -51,52 +57,15 @@ class TypstObj:
         s = f"{self.func}({', '.join([f'{k}: {v}' for k, v in res.items()])})"
         return s
 
+    @classmethod
+    def from_dict(cls, d: dict) -> TypstObj:
+        raise NotImplementedError
+
     def reconstruct(self) -> str:
         for k, v in CONSTS.items():
             if v.__eq__(self):
                 return f"{k}"
         raise NotImplementedError
-
-
-class Equation(TypstObj):
-
-    def __init__(
-        self,
-        block: bool,
-        body: dict | TypstObj,
-        numbering: Optional[str] = None,
-        supplement: Optional[dict | TypstObj] = None,
-        *args, **kwargs
-    ) -> None:
-        if kwargs.get("func") != "equation":
-            raise ValueError("func must be equation")
-        super().__init__(*args, **kwargs)
-        self.func = "equation"
-        self.block = block
-        self.numbering = numbering
-        self.number_align = kwargs.get("number-align")
-        self.body = from_dict(body) if isinstance(body, dict) else body
-        self.supplement = from_dict(supplement) if isinstance(
-            supplement, dict) else supplement
-
-    def reconstruct(self) -> str:
-        try:
-            return super().reconstruct()
-        except:
-            res = self.body.reconstruct()
-            if self.block:
-                res = f" {res} "
-            res = f"${res}$"
-
-            # Remove consecutive spaces
-            import re
-
-            parts = re.split(r'((?<!\\)".*?(?<!\\)")', res)
-            parts = [re.sub(r'\s+', ' ', part)
-                     if not part.startswith('"') else part for part in parts]
-            res = "".join(parts)
-
-            return res
 
 
 class Overline(TypstObj):
@@ -297,120 +266,6 @@ class Scripts(TypstObj):
             return func_recon("scripts", self.body.reconstruct())
 
 
-class Cancel(TypstObj):
-    def __init__(
-        self,
-        body: dict | TypstObj,
-        *args, **kwargs
-    ) -> None:
-        if kwargs.get("func") != "cancel":
-            raise ValueError("func must be cancel")
-        super().__init__(*args, **kwargs)
-        self.func = "cancel"
-        self.body = from_dict(body) if isinstance(body, dict) else body
-
-    def __eq__(self, value: Cancel) -> bool:
-        return isinstance(value, Cancel) \
-            and self.body == value.body \
-            and self.angle == value.angle
-
-    def reconstruct(self) -> str:
-        try:
-            return super().reconstruct()
-        except:
-            return (
-                func_recon("cancel", self.body.reconstruct(), angle=self.angle)
-                if hasattr(self, "angle")
-                else func_recon(
-                    "cancel",
-                    self.body.reconstruct(),
-                )
-            )
-
-
-class Accent(TypstObj):
-    def __init__(
-        self,
-        base: dict | TypstObj,
-        accent: str,
-        *args, **kwargs
-    ) -> None:
-        if kwargs.get("func") != "accent":
-            raise ValueError("func must be accent")
-        super().__init__(*args, **kwargs)
-        self.func = "accent"
-        self.base = from_dict(base) if isinstance(base, dict) else base
-        self.accent = accent
-
-    def __eq__(self, value: Accent) -> bool:
-        return isinstance(value, Accent) \
-            and self.base == value.base \
-            and self.accent == value.accent
-
-    def reconstruct(self) -> str:
-        try:
-            return super().reconstruct()
-        except:
-            global ACCENTS
-            if ACCENTS[self.accent]["callable"]:
-                return func_recon(ACCENTS[self.accent]["name"], self.base.reconstruct())
-            else:
-                return func_recon("accent", self.base.reconstruct(), ACCENTS[self.accent]["shortcut"])
-
-
-class Class(TypstObj):
-    def __init__(
-        self,
-        body: dict | TypstObj,
-        # class: str,
-        *args, **kwargs
-    ) -> None:
-        if kwargs.get("func") != "class":
-            raise ValueError("func must be class")
-        super().__init__(*args, **kwargs)
-        self.func = "class"
-        self.body = from_dict(body) if isinstance(body, dict) else body
-        self.class_ = kwargs.get("class")
-
-    def __eq__(self, value: Class) -> bool:
-        return isinstance(value, Class) \
-            and self.body == value.body \
-            and self.class_ == value.class_
-
-    def reconstruct(self) -> str:
-        try:
-            return super().reconstruct()
-        except:
-            return func_recon("class", f"\"self.class_\"", self.body.reconstruct())
-
-
-class Text(TypstObj):
-    def __init__(
-        self,
-        text: str,
-        func: str = "text",
-        *args, **kwargs
-    ) -> None:
-        if func != "text":
-            raise ValueError("func must be text")
-        super().__init__(func=func, *args, **kwargs)
-        self.func = "text"
-        self.text = text
-
-    def __eq__(self, value: Text) -> bool:
-        return isinstance(value, Text) and self.text == value.text
-
-    def reconstruct(self) -> str:
-        try:
-            return super().reconstruct()
-        except:
-            if len(self.text) == 1:
-                return escape(self.text)
-
-            def str_escape(c): return escape(c, chars='\\"')
-            return f"""\"{''.join(map(str_escape, self.text))}\""""
-
-
 class Sequence(TypstObj):
 
     def __init__(
@@ -570,7 +425,7 @@ class Matrix(TypstObj):
             body = '; '.join(rows)
             if self.delim == "(" or self.delim is None:
                 return func_recon("mat", body)
-            return func_recon("mat", body, delim=f"\"self.delim\"")
+            return func_recon("mat", body, delim=f"\"{self.delim}\"")
 
 
 class LR(TypstObj):

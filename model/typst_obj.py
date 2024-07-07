@@ -7,26 +7,26 @@ def typst_obj(name: str, pos: List[str]):
     """
     `pos` is to indicate the order of the positional arguments.
     """
-    def decorator(cls):
+    def decorator(_cls):
 
-        assert issubclass(cls, TypstObj)
+        assert issubclass(_cls, TypstObj)
         named = {
-            k: cls.getattr(k)  # type: ignore
-            for k, v in cls.__dict__.items()
+            k: _cls.getattr(k)  # type: ignore
+            for k, v in _cls.__dict__.items()
             if not k.startswith("__") \
             and not callable(v)
         }
         """argname: default value"""
         defined_pos = set([
             k
-            for k in cls.__annotations__
+            for k in _cls.__annotations__
             if k not in named
         ])
         # All defined positional args(without default values)
         # should be in `pos`.
         assert set(pos) == defined_pos
 
-        class __Wrapped(cls):
+        class __Wrapped(_cls):
 
             def __init__(self, *args, **kwargs):
                 if "func" in kwargs:
@@ -43,7 +43,7 @@ def typst_obj(name: str, pos: List[str]):
                 for an, av in zip(pos, args):
                     assert isinstance(
                         av,
-                        cls.__annotations__.get(an)  # type: ignore
+                        _cls.__annotations__.get(an)  # type: ignore
                     )
                     setattr(self, an, av)
                 for k, v in kwargs.items():
@@ -65,6 +65,25 @@ def typst_obj(name: str, pos: List[str]):
 
             def __repr__(self) -> str:
                 return self.reconstruct()
+
+            @classmethod
+            def from_dict(cls, d: dict) -> TypstObj:
+                for k in d:
+                    if k not in named and k not in pos:
+                        print(
+                            f"Unexpected arg: {k}"
+                        )
+                return cls(
+                    *[
+                        d[n]
+                        for n in pos
+                    ],
+                    **{
+                        k: d[k]
+                        for k, v in named.items()
+                        if k in d
+                    }
+                )
 
             def __reconstruct(self) -> str:
                 try:
@@ -89,8 +108,8 @@ def typst_obj(name: str, pos: List[str]):
             def reconstruct(self) -> str:
                 return self.__reconstruct()
 
-        __Wrapped.__name__ = cls.__name__
-        __Wrapped.__annotations__ = cls.__annotations__
+        __Wrapped.__name__ = _cls.__name__
+        __Wrapped.__annotations__ = _cls.__annotations__
 
         return __Wrapped
     return decorator
