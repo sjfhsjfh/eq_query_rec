@@ -85,12 +85,12 @@ def typst_obj(name: str, pos: List[str]):
                     }
                 )
 
-            def __reconstruct(self) -> str:
+            def __reconstruct(self, *args, **kwargs) -> str:
                 try:
-                    return TypstObj.reconstruct(self)
+                    return TypstObj.reconstruct(self, *args, **kwargs)
                 except:
                     try:
-                        return super().reconstruct()
+                        return super().reconstruct(*args, **kwargs)
                     except:
                         return func_recon(
                             name,
@@ -105,8 +105,8 @@ def typst_obj(name: str, pos: List[str]):
                             }
                         )
 
-            def reconstruct(self) -> str:
-                return self.__reconstruct()
+            def reconstruct(self, *args, **kwargs) -> str:
+                return self.__reconstruct(*args, **kwargs)
 
         __Wrapped.__name__ = _cls.__name__
         __Wrapped.__annotations__ = _cls.__annotations__

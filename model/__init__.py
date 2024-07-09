@@ -22,7 +22,12 @@ def func_recon(name, *args, **kwargs):
     # Remove No
     # ne values in kwargs
     kwargs = {k: v for k, v in kwargs.items() if v is not None}
-    arg_items = list(map(lambda x: f"{x[0]}: {str(x[1])}", kwargs.items()))
+
+    def to_str(x):
+        if isinstance(x, TypstObj):
+            return x.reconstruct(chars="\\.$&#\"'")
+
+    arg_items = list(map(lambda x: f"{x[0]}: {to_str(x[1])}", kwargs.items()))
     arg_items.extend(list(map(str, args)))
     return f"{name}( {', '.join(arg_items)} )"
 
@@ -61,7 +66,7 @@ class TypstObj:
     def from_dict(cls, d: dict) -> TypstObj:
         raise NotImplementedError
 
-    def reconstruct(self) -> str:
+    def reconstruct(self, chars="\\,;.$&#\"'") -> str:
         for k, v in CONSTS.items():
             if v.__eq__(self):
                 return f"{k}"
@@ -83,11 +88,14 @@ class Overline(TypstObj):
     def __eq__(self, value: Overline) -> bool:
         return isinstance(value, Overline) and self.body == value.body
 
-    def reconstruct(self) -> str:
+    def reconstruct(self, *args, **kwargs) -> str:
         try:
-            return super().reconstruct()
+            return super().reconstruct(*args, **kwargs)
         except:
-            return func_recon("overline", self.body.reconstruct())
+            return func_recon(
+                "overline",
+                self.body.reconstruct(*args, **kwargs)
+            )
 
 
 class Underline(TypstObj):
@@ -105,11 +113,14 @@ class Underline(TypstObj):
     def __eq__(self, value: Underline) -> bool:
         return isinstance(value, Underline) and self.body == value.body
 
-    def reconstruct(self) -> str:
+    def reconstruct(self, *args, **kwargs) -> str:
         try:
-            return super().reconstruct()
+            return super().reconstruct(*args, **kwargs)
         except:
-            return func_recon("underline", self.body.reconstruct())
+            return func_recon(
+                "underline",
+                self.body.reconstruct(*args, **kwargs)
+            )
 
 
 class Overbrace(TypstObj):
@@ -127,11 +138,14 @@ class Overbrace(TypstObj):
     def __eq__(self, value: Overbrace) -> bool:
         return isinstance(value, Overbrace) and self.body == value.body
 
-    def reconstruct(self) -> str:
+    def reconstruct(self, *args, **kwargs) -> str:
         try:
-            return super().reconstruct()
+            return super().reconstruct(*args, **kwargs)
         except:
-            return func_recon("overbrace", self.body.reconstruct())
+            return func_recon(
+                "overbrace",
+                self.body.reconstruct(*args, **kwargs)
+            )
 
 
 class Underbrace(TypstObj):

@@ -1,4 +1,4 @@
-from .. import TypstObj
+from .. import escape, TypstObj
 from ..typst_obj import typst_obj
 
 
@@ -6,5 +6,5 @@ from ..typst_obj import typst_obj
 class Text(TypstObj):
     text: str
 
-    def reconstruct(self) -> str:
-        return self.text
+    def reconstruct(self, chars="\\,;.$&#\"'") -> str:
+        return escape(self.text, chars=chars)

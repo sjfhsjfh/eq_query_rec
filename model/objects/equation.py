@@ -40,11 +40,11 @@ class Equation(TypstObj):
         for k, v in kwargs.items():
             setattr(self, k, v)
 
-    def reconstruct(self) -> str:
+    def reconstruct(self, *args, **kwargs) -> str:
         try:
-            return super().reconstruct()
+            return super().reconstruct(*args, **kwargs)
         except:
-            res = self.body.reconstruct()
+            res = self.body.reconstruct(*args, **kwargs)
             if self.block:
                 res = f" {res} "
             res = f"${res}$"
