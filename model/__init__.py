@@ -18,6 +18,7 @@ from .objects.scripts import Scripts
 from .objects.lr import LR
 from .objects.space import Space
 from .objects.alignpoint import AlignPoint
+from .objects.frac import Frac
 
 
 def escape(s: str, chars: str = "\\,;.$&#\"'") -> str:
@@ -310,50 +311,6 @@ class LineBreak(TypstObj):
             return super().reconstruct()
         except:
             return r"\ "
-
-
-class AlignPoint(TypstObj):
-    def __init__(
-        self,
-        *args, **kwargs
-    ) -> None:
-        if kwargs.get("func") != "align-point":
-            raise ValueError("func must be align-point")
-        super().__init__(*args, **kwargs)
-        self.func = "align-point"
-
-    def __eq__(self, value: AlignPoint) -> bool:
-        return isinstance(value, AlignPoint)
-
-    def reconstruct(self) -> str:
-        try:
-            return super().reconstruct()
-        except:
-            return "&"
-
-
-class Frac(TypstObj):
-    def __init__(
-        self,
-        num: dict | TypstObj,
-        denom: dict | TypstObj,
-        *args, **kwargs
-    ) -> None:
-        if kwargs.get("func") != "frac":
-            raise ValueError("func must be frac")
-        super().__init__(*args, **kwargs)
-        self.func = "frac"
-        self.num = from_dict(num) if isinstance(
-            num, dict) else num
-        self.denom = from_dict(denom) if isinstance(
-            denom, dict) else denom
-
-    def reconstruct(self) -> str:
-        try:
-            return super().reconstruct()
-        except:
-            return f"( {self.num.reconstruct()} )" \
-                + " / " + f"( {self.denom.reconstruct()} )"
 
 
 class Binom(TypstObj):
