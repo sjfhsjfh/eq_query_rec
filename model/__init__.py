@@ -6,6 +6,16 @@ from .objects.cancel import Cancel
 from .objects.class_ import Class
 from .objects.equation import Equation
 from .objects.text import Text
+from .objects.overline import Overline
+from .objects.underline import Underline
+from .objects.overbrace import Overbrace
+from .objects.underbrace import Underbrace
+from .objects.overbracket import Overbracket
+from .objects.underbracket import Underbracket
+from .objects.mid import Mid
+from .objects.limits import Limits
+from .objects.scripts import Scripts
+from .objects.lr import LR
 
 
 def escape(s: str, chars: str = "\\,;.$&#\"'") -> str:
@@ -73,169 +83,6 @@ class TypstObj:
         raise NotImplementedError
 
 
-class Overline(TypstObj):
-    def __init__(
-        self,
-        body: dict | TypstObj,
-        *args, **kwargs
-    ) -> None:
-        if kwargs.get("func") != "overline":
-            raise ValueError("func must be overline")
-        super().__init__(*args, **kwargs)
-        self.func = "overline"
-        self.body = from_dict(body) if isinstance(body, dict) else body
-
-    def __eq__(self, value: Overline) -> bool:
-        return isinstance(value, Overline) and self.body == value.body
-
-    def reconstruct(self, *args, **kwargs) -> str:
-        try:
-            return super().reconstruct(*args, **kwargs)
-        except:
-            return func_recon(
-                "overline",
-                self.body.reconstruct(*args, **kwargs)
-            )
-
-
-class Underline(TypstObj):
-    def __init__(
-        self,
-        body: dict | TypstObj,
-        *args, **kwargs
-    ) -> None:
-        if kwargs.get("func") != "underline":
-            raise ValueError("func must be underline")
-        super().__init__(*args, **kwargs)
-        self.func = "underline"
-        self.body = from_dict(body) if isinstance(body, dict) else body
-
-    def __eq__(self, value: Underline) -> bool:
-        return isinstance(value, Underline) and self.body == value.body
-
-    def reconstruct(self, *args, **kwargs) -> str:
-        try:
-            return super().reconstruct(*args, **kwargs)
-        except:
-            return func_recon(
-                "underline",
-                self.body.reconstruct(*args, **kwargs)
-            )
-
-
-class Overbrace(TypstObj):
-    def __init__(
-        self,
-        body: dict | TypstObj,
-        *args, **kwargs
-    ) -> None:
-        if kwargs.get("func") != "overbrace":
-            raise ValueError("func must be overbrace")
-        super().__init__(*args, **kwargs)
-        self.func = "overbrace"
-        self.body = from_dict(body) if isinstance(body, dict) else body
-
-    def __eq__(self, value: Overbrace) -> bool:
-        return isinstance(value, Overbrace) and self.body == value.body
-
-    def reconstruct(self, *args, **kwargs) -> str:
-        try:
-            return super().reconstruct(*args, **kwargs)
-        except:
-            return func_recon(
-                "overbrace",
-                self.body.reconstruct(*args, **kwargs)
-            )
-
-
-class Underbrace(TypstObj):
-    def __init__(
-        self,
-        body: dict | TypstObj,
-        *args, **kwargs
-    ) -> None:
-        if kwargs.get("func") != "underbrace":
-            raise ValueError("func must be underbrace")
-        super().__init__(*args, **kwargs)
-        self.func = "underbrace"
-        self.body = from_dict(body) if isinstance(body, dict) else body
-
-    def __eq__(self, value: Underbrace) -> bool:
-        return isinstance(value, Underbrace) and self.body == value.body
-
-    def reconstruct(self) -> str:
-        try:
-            return super().reconstruct()
-        except:
-            return func_recon("underbrace", self.body.reconstruct())
-
-
-class Overbracket(TypstObj):
-    def __init__(
-        self,
-        body: dict | TypstObj,
-        *args, **kwargs
-    ) -> None:
-        if kwargs.get("func") != "overbracket":
-            raise ValueError("func must be overbracket")
-        super().__init__(*args, **kwargs)
-        self.func = "overbracket"
-        self.body = from_dict(body) if isinstance(body, dict) else body
-
-    def __eq__(self, value: Overbracket) -> bool:
-        return isinstance(value, Overbracket) and self.body == value.body
-
-    def reconstruct(self) -> str:
-        try:
-            return super().reconstruct()
-        except:
-            return func_recon("overbracket", self.body.reconstruct())
-
-
-class Underbracket(TypstObj):
-    def __init__(
-        self,
-        body: dict | TypstObj,
-        *args, **kwargs
-    ) -> None:
-        if kwargs.get("func") != "underbracket":
-            raise ValueError("func must be underbracket")
-        super().__init__(*args, **kwargs)
-        self.func = "underbracket"
-        self.body = from_dict(body) if isinstance(body, dict) else body
-
-    def __eq__(self, value: Underbracket) -> bool:
-        return isinstance(value, Underbracket) and self.body == value.body
-
-    def reconstruct(self) -> str:
-        try:
-            return super().reconstruct()
-        except:
-            return func_recon("underbracket", self.body.reconstruct())
-
-
-class Mid(TypstObj):
-    def __init__(
-        self,
-        body: dict | TypstObj,
-        *args, **kwargs
-    ) -> None:
-        if kwargs.get("func") != "mid":
-            raise ValueError("func must be mid")
-        super().__init__(*args, **kwargs)
-        self.func = "mid"
-        self.body = from_dict(body) if isinstance(body, dict) else body
-
-    def __eq__(self, value: Mid) -> bool:
-        return isinstance(value, Mid) and self.body == value.body
-
-    def reconstruct(self) -> str:
-        try:
-            return super().reconstruct()
-        except:
-            return func_recon("mid", self.body.reconstruct())
-
-
 class Limits(TypstObj):
     def __init__(
         self,
@@ -256,28 +103,6 @@ class Limits(TypstObj):
             return super().reconstruct()
         except:
             return func_recon("limits", self.body.reconstruct())
-
-
-class Scripts(TypstObj):
-    def __init__(
-        self,
-        body: dict | TypstObj,
-        *args, **kwargs
-    ) -> None:
-        if kwargs.get("func") != "scripts":
-            raise ValueError("func must be scripts")
-        super().__init__(*args, **kwargs)
-        self.func = "scripts"
-        self.body = from_dict(body) if isinstance(body, dict) else body
-
-    def __eq__(self, value: Scripts) -> bool:
-        return isinstance(value, Scripts) and self.body == value.body
-
-    def reconstruct(self) -> str:
-        try:
-            return super().reconstruct()
-        except:
-            return func_recon("scripts", self.body.reconstruct())
 
 
 class Sequence(TypstObj):
@@ -440,55 +265,6 @@ class Matrix(TypstObj):
             if self.delim == "(" or self.delim is None:
                 return func_recon("mat", body)
             return func_recon("mat", body, delim=f"\"{self.delim}\"")
-
-
-class LR(TypstObj):
-    def __init__(
-        self,
-        body: dict | TypstObj,
-        *args, **kwargs
-    ) -> None:
-        if kwargs.get("func") != "lr":
-            raise ValueError("func must be lr")
-        super().__init__(*args, **kwargs)
-        self.func = "lr"
-        self.body = from_dict(body) if isinstance(body, dict) else body
-
-    def __eq__(self, value: LR) -> bool:
-        return isinstance(value, LR) and self.body == value.body
-
-    def reconstruct(self) -> str:
-        try:
-            return super().reconstruct()
-        except:
-            if isinstance(self.body, Sequence):
-                c = self.body.children
-                first_index = next(
-                    (
-                        index
-                        for index, item in enumerate(c)
-                        if not isinstance(item, Space)
-                    ),
-                    None,
-                )
-                last_index = next(
-                    (
-                        len(c) - 1 - index
-                        for index, item in enumerate(reversed(c))
-                        if not isinstance(item, Space)
-                    ),
-                    None,
-                )
-                c = c[first_index: last_index + 1]
-
-                if len(c) >= 2:
-                    if c[0] == Text("(") and c[-1] == Text(")"):
-                        return self.body.reconstruct()
-                    if c[0] == Text("[") and c[-1] == Text("]"):
-                        return self.body.reconstruct()
-                    if c[0] == Text("{") and c[-1] == Text("}"):
-                        return self.body.reconstruct()
-            return func_recon("lr", self.body.reconstruct())
 
 
 class Space(TypstObj):
