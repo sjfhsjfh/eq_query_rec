@@ -16,6 +16,7 @@ from .objects.mid import Mid
 from .objects.limits import Limits
 from .objects.scripts import Scripts
 from .objects.lr import LR
+from .objects.space import Space
 
 
 def escape(s: str, chars: str = "\\,;.$&#\"'") -> str:
