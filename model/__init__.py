@@ -17,6 +17,7 @@ from .objects.limits import Limits
 from .objects.scripts import Scripts
 from .objects.lr import LR
 from .objects.space import Space
+from .objects.alignpoint import AlignPoint
 
 
 def escape(s: str, chars: str = "\\,;.$&#\"'") -> str:
@@ -267,26 +268,6 @@ class Matrix(TypstObj):
                 return func_recon("mat", body)
             return func_recon("mat", body, delim=f"\"{self.delim}\"")
 
-
-class Space(TypstObj):
-    def __init__(
-        self,
-        *args, **kwargs
-    ) -> None:
-        if kwargs.get("func") != "space":
-            raise ValueError("func must be space")
-        super().__init__(*args, **kwargs)
-        self.func = "space"
-
-    def __eq__(self, value: Space) -> bool:
-        return isinstance(value, Space)
-
-    def reconstruct(self) -> str:
-        try:
-            return super().reconstruct()
-        except:
-            # return "med"
-            return " "  # ! TO BE MODIFIED
 
 
 class Primes(TypstObj):
