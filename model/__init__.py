@@ -19,6 +19,7 @@ from .objects.lr import LR
 from .objects.space import Space
 from .objects.alignpoint import AlignPoint
 from .objects.frac import Frac
+from .objects.binom import Binom
 from .objects.cases import Cases
 from .objects.vec import Vec
 from .objects.primes import Primes
@@ -142,52 +143,6 @@ class Sequence(TypstObj):
                 return [c.reconstruct() for c in s]
 
             return " ".join(process_slice(self.children))
-
-
-class Binom(TypstObj):
-    def __init__(
-        self,
-        upper: dict | TypstObj | List[dict | TypstObj],
-        lower: dict | TypstObj | List[dict | TypstObj],
-        *args, **kwargs
-    ) -> None:
-        if kwargs.get("func") != "binom":
-            raise ValueError("func must be binom")
-        super().__init__(*args, **kwargs)
-        self.func = "binom"
-        self.upper = from_dict(upper) if isinstance(
-            upper, dict) else [
-                from_dict(e) if isinstance(e, dict) else e
-                for e in upper
-        ] if isinstance(upper, list) else upper
-        self.lower = from_dict(lower) if isinstance(
-            lower, dict) else [
-                from_dict(e) if isinstance(e, dict) else e
-                for e in lower
-        ] if isinstance(lower, list) else lower
-
-    def __eq__(self, value: Binom) -> bool:
-        return isinstance(value, Binom) \
-            and self.upper == value.upper \
-            and self.lower == value.lower
-
-    def reconstruct(self) -> str:
-        try:
-            return super().reconstruct()
-        except:
-            upper = self.upper.reconstruct() if isinstance(
-                self.upper, TypstObj
-            ) else " ".join(
-                [e.reconstruct() for e in self.upper])
-            lower = self.lower.reconstruct() if isinstance(
-                self.lower, TypstObj
-            ) else "\\, ".join(
-                [e.reconstruct() for e in self.lower])
-            return func_recon(
-                "binom",
-                upper,
-                lower
-            )
 
 
 class Root(TypstObj):
