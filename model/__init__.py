@@ -21,6 +21,7 @@ from .objects.alignpoint import AlignPoint
 from .objects.frac import Frac
 from .objects.cases import Cases
 from .objects.vec import Vec
+from .objects.primes import Primes
 
 
 def escape(s: str, chars: str = "\\,;.$&#\"'") -> str:
@@ -182,29 +183,6 @@ class Matrix(TypstObj):
             if self.delim == "(" or self.delim is None:
                 return func_recon("mat", body)
             return func_recon("mat", body, delim=f"\"{self.delim}\"")
-
-
-
-class Primes(TypstObj):
-    def __init__(
-        self,
-        count: int,
-        *args, **kwargs
-    ) -> None:
-        if kwargs.get("func") != "primes":
-            raise ValueError("func must be primes")
-        super().__init__(*args, **kwargs)
-        self.func = "primes"
-        self.count = count
-
-    def __eq__(self, value: Primes) -> bool:
-        return isinstance(value, Primes) and self.count == value.count
-
-    def reconstruct(self) -> str:
-        try:
-            return super().reconstruct()
-        except:
-            return func_recon("primes", f"#{self.count}")
 
 
 class LineBreak(TypstObj):
