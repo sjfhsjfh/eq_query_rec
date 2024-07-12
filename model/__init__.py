@@ -27,6 +27,7 @@ from .objects.linebreak import LineBreak
 from .objects.matrix import Matrix
 from .objects.root import Root
 from .objects.h import H
+from .objects.move import Move
 
 
 def escape(s: str, chars: str = "\\,;.$&#\"'") -> str:
@@ -236,39 +237,6 @@ class Styled(TypstObj):
             return super().reconstruct()
         except:
             return self.child.reconstruct()  # ! TO BE MODIFIED
-
-
-class Move(TypstObj):
-    def __init__(
-        self,
-        body: dict | TypstObj,
-        dx: Optional[str] = None,
-        dy: Optional[str] = None,
-        *args, **kwargs
-    ) -> None:
-        if kwargs.get("func") != "move":
-            raise ValueError("func must be move")
-        super().__init__(*args, **kwargs)
-        self.func = "move"
-        self.dx = dx
-        self.dy = dy
-        self.body = from_dict(body) if isinstance(body, Dict) else body
-
-    def __eq__(self, value: 'Move') -> bool:
-        return isinstance(value, Move) \
-            and self.dy == value.dy \
-            and self.body == value.body
-
-    def reconstruct(self) -> str:
-        try:
-            return super().reconstruct()
-        except:
-            return func_recon(
-                "#move",
-                self.body.reconstruct(),
-                dx=self.dx,
-                dy=self.dy
-            )
 
 
 class Strike(TypstObj):
