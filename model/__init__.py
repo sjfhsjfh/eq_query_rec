@@ -32,6 +32,7 @@ from .objects.attach import Attach
 from .objects.op import Op
 from .objects.styled import Styled
 from .objects.strike import Strike
+from .objects.sequence import Sequence
 
 
 def escape(s: str, chars: str = "\\,;.$&#\"'") -> str:
@@ -97,59 +98,6 @@ class TypstObj:
             if v.__eq__(self):
                 return f"{k}"
         raise NotImplementedError
-
-
-class Sequence(TypstObj):
-
-    def __init__(
-        self,
-        children: list[dict | TypstObj],
-        *args, **kwargs
-    ) -> None:
-        if kwargs.get("func") != "sequence":
-            raise ValueError("func must be sequence")
-        super().__init__(*args, **kwargs)
-        self.func = "sequence"
-        self.children = [from_dict(child) if isinstance(
-            child, dict) else child for child in children]
-
-    def __eq__(self, value: Sequence) -> bool:
-        if not isinstance(value, Sequence):
-            return False
-        if len(self.children) != len(value.children):
-            return False
-        for a, b in zip(self.children, value.children):
-            if not a.__eq__(b):
-                return False
-        return True
-
-    def reconstruct(self) -> str:
-        try:
-            return super().reconstruct()
-        except:
-            def process_slice(s: List[TypstObj]):
-                # KMP find Sequence in CONSTS
-                for k, v in CONSTS.items():
-                    if not isinstance(v, Sequence):
-                        continue
-                    i = 0
-                    j = 0
-                    while i < len(s) and j < len(v.children):
-                        if s[i] == v.children[j]:
-                            i += 1
-                            j += 1
-                            if j == len(v.children):
-                                return process_slice(s[:i - j]) \
-                                    + [k] + process_slice(s[i:])
-                        else:
-                            t = CONST_KMP[k]
-                            if j == 0:
-                                i += 1
-                            else:
-                                j = t[j - 1]
-                return [c.reconstruct() for c in s]
-
-            return " ".join(process_slice(self.children))
 
 
 SKIP = (
