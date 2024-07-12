@@ -28,6 +28,7 @@ from .objects.matrix import Matrix
 from .objects.root import Root
 from .objects.h import H
 from .objects.move import Move
+from .objects.attach import Attach
 
 
 def escape(s: str, chars: str = "\\,;.$&#\"'") -> str:
@@ -146,39 +147,6 @@ class Sequence(TypstObj):
                 return [c.reconstruct() for c in s]
 
             return " ".join(process_slice(self.children))
-
-
-
-
-class Attach(TypstObj):
-    def __init__(
-        self,
-        base: dict | TypstObj,
-        t: Optional[dict | TypstObj] = None,
-        b: Optional[dict | TypstObj] = None,
-        *args, **kwargs
-    ) -> None:
-        if kwargs.get("func") != "attach":
-            raise ValueError("func must be attach")
-        super().__init__(*args, **kwargs)
-        self.func = "attach"
-        self.base = from_dict(base) if isinstance(
-            base, dict) else base
-        self.t = from_dict(t) if isinstance(
-            t, dict) else t
-        self.b = from_dict(b) if isinstance(
-            b, dict) else b
-
-    def reconstruct(self) -> str:
-        try:
-            return super().reconstruct()
-        except:
-            res = self.base.reconstruct()
-            if self.t is not None:
-                res = f"{res} ^ ( {self.t.reconstruct()} )"
-            if self.b is not None:
-                res = f"{res} _ ( {self.b.reconstruct()} )"
-            return res
 
 
 class Op(TypstObj):
