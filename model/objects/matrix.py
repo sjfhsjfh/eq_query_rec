@@ -2,7 +2,7 @@ from .. import TypstObj, func_recon
 from ..typst_obj import typst_obj
 
 
-@typst_obj("matrix", pos=["delim", "rows"])
+@typst_obj("matrix", pos=["rows"])
 class Matrix(TypstObj):
     rows: list[list[dict | TypstObj]]
     delim: str = "("

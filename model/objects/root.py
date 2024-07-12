@@ -2,7 +2,7 @@ from .. import TypstObj, func_recon
 from ..typst_obj import typst_obj
 from typing import Optional
 
-@typst_obj("root", pos=["index", "radicand"])
+@typst_obj("root", pos=["radicand"])
 class Root(TypstObj):
     radicand: TypstObj
     index: Optional[dict | TypstObj] = None

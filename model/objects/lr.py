@@ -1,4 +1,8 @@
-from .. import TypstObj, func_recon, Text, Space, Sequence
+from .. import TypstObj, func_recon
+from .text import Text
+from .space import Space
+from .sequence import Sequence
+
 from ..typst_obj import typst_obj
 
 
