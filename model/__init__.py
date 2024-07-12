@@ -22,6 +22,7 @@ from .objects.frac import Frac
 from .objects.cases import Cases
 from .objects.vec import Vec
 from .objects.primes import Primes
+from .objects.linebreak import LineBreak
 
 
 def escape(s: str, chars: str = "\\,;.$&#\"'") -> str:
@@ -183,26 +184,6 @@ class Matrix(TypstObj):
             if self.delim == "(" or self.delim is None:
                 return func_recon("mat", body)
             return func_recon("mat", body, delim=f"\"{self.delim}\"")
-
-
-class LineBreak(TypstObj):
-    def __init__(
-        self,
-        *args, **kwargs
-    ) -> None:
-        if kwargs.get("func") != "linebreak":
-            raise ValueError("func must be linebreak")
-        super().__init__(*args, **kwargs)
-        self.func = "linebreak"
-
-    def __eq__(self, value: LineBreak) -> bool:
-        return isinstance(value, LineBreak)
-
-    def reconstruct(self) -> str:
-        try:
-            return super().reconstruct()
-        except:
-            return r"\ "
 
 
 class Binom(TypstObj):
