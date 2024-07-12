@@ -25,6 +25,7 @@ from .objects.vec import Vec
 from .objects.primes import Primes
 from .objects.linebreak import LineBreak
 from .objects.matrix import Matrix
+from .objects.root import Root
 
 
 def escape(s: str, chars: str = "\\,;.$&#\"'") -> str:
@@ -143,34 +144,6 @@ class Sequence(TypstObj):
                 return [c.reconstruct() for c in s]
 
             return " ".join(process_slice(self.children))
-
-
-class Root(TypstObj):
-    def __init__(
-        self,
-        radicand: dict | TypstObj,
-        index: Optional[dict | TypstObj] = None,
-        *args, **kwargs
-    ) -> None:
-        if kwargs.get("func") != "root":
-            raise ValueError("func must be root")
-        super().__init__(*args, **kwargs)
-        self.func = "root"
-        self.radicand = from_dict(radicand) if isinstance(
-            radicand, dict) else radicand
-        self.index = from_dict(index) if isinstance(index, dict) else index
-
-    def reconstruct(self) -> str:
-        try:
-            return super().reconstruct()
-        except:
-            if self.index is not None:
-                return func_recon(
-                    "root",
-                    self.index.reconstruct(),
-                    self.radicand.reconstruct()
-                )
-            return func_recon("sqrt", self.radicand.reconstruct())
 
 
 class H(TypstObj):
