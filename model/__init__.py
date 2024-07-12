@@ -23,6 +23,7 @@ from .objects.cases import Cases
 from .objects.vec import Vec
 from .objects.primes import Primes
 from .objects.linebreak import LineBreak
+from .objects.matrix import Matrix
 
 
 def escape(s: str, chars: str = "\\,;.$&#\"'") -> str:
@@ -141,49 +142,6 @@ class Sequence(TypstObj):
                 return [c.reconstruct() for c in s]
 
             return " ".join(process_slice(self.children))
-
-
-class Matrix(TypstObj):
-    def __init__(
-        self,
-        rows: list[list[dict | TypstObj]],
-        delim: str = "(",
-        *args, **kwargs
-    ) -> None:
-        if kwargs.get("func") != "mat":
-            raise ValueError("func must be mat")
-        super().__init__(*args, **kwargs)
-        self.func = "mat"
-        self.delim = delim
-        self.rows = [[from_dict(cell) if isinstance(
-            cell, dict) else cell for cell in row] for row in rows]
-
-    def __eq__(self, value: Matrix) -> bool:
-        if not isinstance(value, Matrix):
-            return False
-        if self.delim != value.delim:
-            return False
-        if len(self.rows) != len(value.rows):
-            return False
-        for a, b in zip(self.rows, value.rows):
-            if len(a) != len(b):
-                return False
-            for c, d in zip(a, b):
-                if not c.__eq__(d):
-                    return False
-        return True
-
-    def reconstruct(self) -> str:
-        try:
-            return super().reconstruct()
-        except:
-            rows = []
-            for row in self.rows:
-                rows.append(", ".join([cell.reconstruct() for cell in row]))
-            body = '; '.join(rows)
-            if self.delim == "(" or self.delim is None:
-                return func_recon("mat", body)
-            return func_recon("mat", body, delim=f"\"{self.delim}\"")
 
 
 class Binom(TypstObj):
