@@ -19,6 +19,8 @@ from .objects.lr import LR
 from .objects.space import Space
 from .objects.alignpoint import AlignPoint
 from .objects.frac import Frac
+from .objects.cases import Cases
+from .objects.vec import Vec
 
 
 def escape(s: str, chars: str = "\\,;.$&#\"'") -> str:
@@ -86,28 +88,6 @@ class TypstObj:
         raise NotImplementedError
 
 
-class Limits(TypstObj):
-    def __init__(
-        self,
-        body: dict | TypstObj,
-        *args, **kwargs
-    ) -> None:
-        if kwargs.get("func") != "limits":
-            raise ValueError("func must be limits")
-        super().__init__(*args, **kwargs)
-        self.func = "limits"
-        self.body = from_dict(body) if isinstance(body, dict) else body
-
-    def __eq__(self, value: Limits) -> bool:
-        return isinstance(value, Limits) and self.body == value.body
-
-    def reconstruct(self) -> str:
-        try:
-            return super().reconstruct()
-        except:
-            return func_recon("limits", self.body.reconstruct())
-
-
 class Sequence(TypstObj):
 
     def __init__(
@@ -159,72 +139,6 @@ class Sequence(TypstObj):
                 return [c.reconstruct() for c in s]
 
             return " ".join(process_slice(self.children))
-
-
-class Cases(TypstObj):
-    def __init__(
-        self,
-        children: list[dict | TypstObj],
-        *args, **kwargs
-    ) -> None:
-        if kwargs.get("func") != "cases":
-            raise ValueError("func must be cases")
-        super().__init__(*args, **kwargs)
-        self.func = "cases"
-        self.children = [from_dict(child) if isinstance(
-            child, dict) else child for child in children]
-
-    def __eq__(self, value: Cases) -> bool:
-        if not isinstance(value, Cases):
-            return False
-        if len(self.children) != len(value.children):
-            return False
-        for a, b in zip(self.children, value.children):
-            if not a.__eq__(b):
-                return False
-        return True
-
-    def reconstruct(self) -> str:
-        try:
-            return super().reconstruct()
-        except:
-            return func_recon(
-                "cases",
-                *[child.reconstruct() for child in self.children]
-            )
-
-
-class Vec(TypstObj):
-    def __init__(
-        self,
-        children: list[dict | TypstObj],
-        *args, **kwargs
-    ) -> None:
-        if kwargs.get("func") != "vec":
-            raise ValueError("func must be vec")
-        super().__init__(*args, **kwargs)
-        self.func = "vec"
-        self.children = [from_dict(child) if isinstance(
-            child, dict) else child for child in children]
-
-    def __eq__(self, value: Vec) -> bool:
-        if not isinstance(value, Vec):
-            return False
-        if len(self.children) != len(value.children):
-            return False
-        for a, b in zip(self.children, value.children):
-            if not a.__eq__(b):
-                return False
-        return True
-
-    def reconstruct(self) -> str:
-        try:
-            return super().reconstruct()
-        except:
-            return func_recon(
-                "vec",
-                *[child.reconstruct() for child in self.children]
-            )
 
 
 class Matrix(TypstObj):
