@@ -31,6 +31,7 @@ from .objects.move import Move
 from .objects.attach import Attach
 from .objects.op import Op
 from .objects.styled import Styled
+from .objects.strike import Strike
 
 
 def escape(s: str, chars: str = "\\,;.$&#\"'") -> str:
@@ -149,41 +150,6 @@ class Sequence(TypstObj):
                 return [c.reconstruct() for c in s]
 
             return " ".join(process_slice(self.children))
-
-
-
-class Strike(TypstObj):
-    def __init__(
-        self,
-        offset: str,
-        extent: str,
-        body: dict | TypstObj,
-        *args, **kwargs
-    ) -> None:
-        if kwargs.get("func") != "strike":
-            raise ValueError("func must be strike")
-        super().__init__(*args, **kwargs)
-        self.func = "strike"
-        self.offset = offset
-        self.extent = extent
-        self.body = from_dict(body) if isinstance(body, Dict) else body
-
-    def __eq__(self, value: 'Strike') -> bool:
-        return isinstance(value, Strike) \
-            and self.offset == value.offset \
-            and self.extent == value.extent \
-            and self.body == value.body
-
-    def reconstruct(self) -> str:
-        try:
-            return super().reconstruct()
-        except:
-            return func_recon(
-                "strike",
-                self.body.reconstruct(),
-                offset=self.offset,
-                extent=self.extent
-            )
 
 
 SKIP = (
