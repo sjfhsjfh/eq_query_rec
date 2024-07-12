@@ -26,6 +26,7 @@ from .objects.primes import Primes
 from .objects.linebreak import LineBreak
 from .objects.matrix import Matrix
 from .objects.root import Root
+from .objects.h import H
 
 
 def escape(s: str, chars: str = "\\,;.$&#\"'") -> str:
@@ -146,34 +147,6 @@ class Sequence(TypstObj):
             return " ".join(process_slice(self.children))
 
 
-class H(TypstObj):
-    def __init__(
-        self,
-        amount: str,
-        weak: bool = True,
-        *args, **kwargs
-    ) -> None:
-        if kwargs.get("func") != "h":
-            raise ValueError("func must be h")
-        super().__init__(*args, **kwargs)
-        self.func = "h"
-        self.amount = amount
-        self.weak = weak
-
-    def __eq__(self, value: H) -> bool:
-        return isinstance(value, H) \
-            and self.amount == value.amount \
-            and self.weak == value.weak
-
-    def reconstruct(self) -> str:
-        try:
-            return super().reconstruct()
-        except:
-            return func_recon(
-                "#h",
-                self.amount,
-                weak=str(self.weak).lower()
-            )
 
 
 class Attach(TypstObj):
