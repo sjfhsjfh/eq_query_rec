@@ -29,6 +29,7 @@ from .objects.root import Root
 from .objects.h import H
 from .objects.move import Move
 from .objects.attach import Attach
+from .objects.op import Op
 
 
 def escape(s: str, chars: str = "\\,;.$&#\"'") -> str:
@@ -147,37 +148,6 @@ class Sequence(TypstObj):
                 return [c.reconstruct() for c in s]
 
             return " ".join(process_slice(self.children))
-
-
-class Op(TypstObj):
-    def __init__(
-        self,
-        text: dict | TypstObj,
-        limits: bool = False,
-        *args, **kwargs
-    ) -> None:
-        if kwargs.get("func") != "op":
-            raise ValueError("func must be op")
-        super().__init__(*args, **kwargs)
-        self.func = "op"
-        self.text = from_dict(text) if isinstance(
-            text, dict) else text
-        self.limits = limits
-
-    def __eq__(self, value: Op) -> bool:
-        return isinstance(value, Op) \
-            and self.text == value.text \
-            and self.limits == value.limits
-
-    def reconstruct(self) -> str:
-        try:
-            return super().reconstruct()
-        except:
-            return func_recon(
-                "op",
-                self.text.reconstruct(),
-                limits=f"#{str(self.limits).lower()}"
-            )
 
 
 class Styled(TypstObj):
