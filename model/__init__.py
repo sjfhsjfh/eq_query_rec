@@ -30,6 +30,7 @@ from .objects.h import H
 from .objects.move import Move
 from .objects.attach import Attach
 from .objects.op import Op
+from .objects.styled import Styled
 
 
 def escape(s: str, chars: str = "\\,;.$&#\"'") -> str:
@@ -149,32 +150,6 @@ class Sequence(TypstObj):
 
             return " ".join(process_slice(self.children))
 
-
-class Styled(TypstObj):
-    def __init__(
-        self,
-        child: dict | TypstObj,
-        styles: str,
-        *args, **kwargs
-    ) -> None:
-        if kwargs.get("func") != "styled":
-            raise ValueError("func must be styled")
-        super().__init__(*args, **kwargs)
-        self.func = "styled"
-        self.child = from_dict(child) if isinstance(
-            child, dict) else child
-        self.styles = styles
-
-    def __eq__(self, value: Styled) -> bool:
-        return isinstance(value, Styled) \
-            and self.child == value.child \
-            and self.styles == value.styles
-
-    def reconstruct(self) -> str:
-        try:
-            return super().reconstruct()
-        except:
-            return self.child.reconstruct()  # ! TO BE MODIFIED
 
 
 class Strike(TypstObj):
