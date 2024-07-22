@@ -35,7 +35,7 @@ def main(root):
 
 
 if __name__ == "__main__":
-    root = Path(__file__).parent
+    root = Path(".")
     fix_physica()
-    main(root / "test")
+    main(root)
     fix_physica()
