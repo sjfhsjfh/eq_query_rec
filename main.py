@@ -1,9 +1,9 @@
 from tqdm import tqdm
-from model import Equation
+from .model import Equation
 from pathlib import Path
-from query import query_eq
+from .query import query_eq
 from typing import List
-from fix_physica import fix_physica
+from .fix_physica import fix_physica
 
 
 def main(root):

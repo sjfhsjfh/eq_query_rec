@@ -1,4 +1,4 @@
-from query import query_eq
+from .query import query_eq
 from typing import List
 
 import os
