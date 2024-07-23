@@ -25,7 +25,6 @@ def normalize(eq):
     trees = query_eq(temp_file_path)
 
     normalized_eq = trees[0].reconstruct()
-    print(normalized_eq)
     return normalized_eq
 
 
