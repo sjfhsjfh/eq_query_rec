@@ -3,6 +3,7 @@ import pandas as pd
 import concurrent.futures
 import hashlib
 import os
+import csv
 
 hashes = set()
 
@@ -28,43 +29,42 @@ def normalize(eq):
     return normalized_eq
 
 
-def process_row(index, row):
+def process_row(row):
     try:
-        original_value = row.iloc[1]
-        row.iloc[1] = normalize(original_value)[2:-2]
-        return index, row, None
-    except:
-        return index, None, row.iloc[1]
+        original_value = row[1]
+        normalized_value = normalize(original_value)[2:-2]
+        return row[0], normalized_value, None
+    except Exception as e:
+        return row[0], None, row[1]
 
 
 def normalize_csv_column(csv_path):
-    df = pd.read_csv(csv_path)
-
-    failed_rows = []
-    normalized_rows = [None] * len(df)
-
     if not (os.path.exists("tmp/") and os.path.isdir("tmp/")):
         os.makedirs("tmp")
 
-    with concurrent.futures.ProcessPoolExecutor() as executor:
-        futures = {
-            executor.submit(process_row, index, row): index
-            for index, row in df.iterrows()
-        }
-        concurrent.futures.wait(futures)
-        for future in concurrent.futures.as_completed(futures):
-            index, row, error = future.result()
-            if row is not None:
-                normalized_rows[index] = row
-            if error is not None:
-                failed_rows.append(error)
+    failed_rows = []
+    normalized_csv_path = f"{os.path.dirname(csv_path)}/normalized_{os.path.basename()}"
 
-    normalized_rows = [row for row in normalized_rows if row is not None]
-    normalized_df = pd.DataFrame(normalized_rows, columns=df.columns)
+    with open(csv_path, "r", newline="", encoding="utf-8") as infile, open(
+        normalized_csv_path, "w", newline="", encoding="utf-8"
+    ) as outfile:
 
-    normalized_df.to_csv(f"normalized_{csv_path}", index=False)
+        reader = csv.reader(infile)
+        writer = csv.writer(outfile)
+
+        headers = next(reader)
+        writer.writerow(headers)
+
+        with concurrent.futures.ProcessPoolExecutor() as executor:
+            futures = {executor.submit(process_row, row): row for row in reader}
+            for future in concurrent.futures.as_completed(futures):
+                index, normalized_value, error = future.result()
+                if normalized_value is not None:
+                    writer.writerow([index, normalized_value])
+                if error is not None:
+                    failed_rows.append((index, error))
 
     if failed_rows:
         with open("normalize_failed.txt", "w") as f:
-            for failed_row in failed_rows:
-                f.write(f"{failed_row}\n")
+            for index, failed_row in failed_rows:
+                f.write(f"Index {index}: {failed_row}\n")
