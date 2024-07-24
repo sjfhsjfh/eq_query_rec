@@ -84,9 +84,10 @@ class Equation(TypstObj):
             return super().reconstruct()
         except:
             res = self.body.reconstruct()
-            if self.block:
-                res = f" {res} "
-            res = f"${res}$"
+
+            # if self.block:
+            #     res = f" {res} "
+            # res = f"${res}$"
 
             # Remove consecutive spaces
             import re
